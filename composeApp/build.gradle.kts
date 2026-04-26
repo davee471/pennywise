@@ -32,6 +32,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-rc01")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -84,4 +85,8 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+repositories {
+    mavenCentral()
 }
