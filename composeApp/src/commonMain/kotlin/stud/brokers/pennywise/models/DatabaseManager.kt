@@ -7,5 +7,6 @@ expect object DatabaseManager {
     fun fetchTransactions(): List<Transaction>
     fun fetchCycle(): BudgetCycle?
     fun fetchCategories(): List<Category>
-
+    fun deleteCycle(id: Int): Boolean
+    fun deleteTransaction(id: Int): Boolean
 }
