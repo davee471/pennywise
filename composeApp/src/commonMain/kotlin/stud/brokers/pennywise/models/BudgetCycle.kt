@@ -20,4 +20,8 @@ data class BudgetCycle(
                 .toLocalDateTime(TimeZone.currentSystemDefault()).date
             return today.daysUntil(endDate).coerceAtLeast(1)
         }
+
+    fun calculateLimit(balance: Double): Double{
+        return balance / remainingDays
+    }
 }
