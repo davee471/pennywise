@@ -7,6 +7,7 @@ import kotlin.time.Clock
 
 enum class TransactionType {EXPENSE, INCOME}
 data class Transaction(
+    val id: Int = 0,
     val amount: Double,
     val type: TransactionType,
     val category: Category,
