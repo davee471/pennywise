@@ -1,3 +1,2 @@
-package stud.brokers.pennywise.ui
+package stud.brokers.pennywise.ui.screens
 
-import androidx.compose.runtime.Composable
