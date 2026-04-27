@@ -1,2 +1,2 @@
-package stud.brokers.pennywise.ui
+package stud.brokers.pennywise.ui.screens
 
