@@ -1,12 +1,15 @@
 package stud.brokers.pennywise.models
 
 expect object DatabaseManager {
-    fun saveCycle(cycle: BudgetCycle): Boolean
-    fun saveTransaction(tx: Transaction): Boolean
-    fun saveCategory(cat: Category): Boolean
-    fun fetchTransactions(): List<Transaction>
-    fun fetchCycle(): BudgetCycle?
-    fun fetchCategories(): List<Category>
-    fun deleteCycle(id: Int): Boolean
-    fun deleteTransaction(id: Int): Boolean
+    suspend fun saveCycle(cycle: BudgetCycle):  DbResult<T>
+    suspend fun saveTransaction(tx: Transaction):  DbResult<unit>
+    suspend fun saveCategory(cat: Category): DbResult<T>
+    suspend fun fetchTransactions(): DbResult<List<Transaction>>
+    suspend fun fetchCycle(): DbResult<BudgetCycle?>
+    suspend fun fetchCategories(): DbResult<List<Category>>
+    suspend fun deleteCycle(id: Int): DbResult<T>
+    suspend fun deleteTransaction(id: Int): DbResult<T>
 }
+
+
+
