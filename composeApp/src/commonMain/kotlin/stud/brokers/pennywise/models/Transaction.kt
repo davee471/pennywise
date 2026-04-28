@@ -7,13 +7,14 @@ import kotlin.time.Clock
 
 enum class TransactionType {EXPENSE, INCOME}
 data class Transaction(
-    val id: Int = 0,
-    val cycleId: Int,
+    val id: Long = 0,
+    val cycleId: Long,
     val amount: Double,
     val type: TransactionType,
     val category: Category,
-    val timestamp: Instant = Clock.System.now(),
+    val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
     ) {
     val date: LocalDate
-        get() = timestamp.toLocalDateTime(TimeZone.currentSystemDefault()).date
+        get() =Instant.fromEpochMilliseconds(timestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault()).date
 }

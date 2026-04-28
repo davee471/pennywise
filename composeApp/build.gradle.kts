@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
-    id("app.cash.sqldelight") version "2.0.2"
+    id("app.cash.sqldelight") version "2.0.2
 }
 
 kotlin {
@@ -49,10 +49,12 @@ kotlin {
     }
 }
 
+
 sqldelight {
     databases {
         create("PennyWiseDatabase") {
             packageName.set("stud.brokers.pennywise")
+            srcDirs("src/commonMain/sqldelight")
         }
     }
 }

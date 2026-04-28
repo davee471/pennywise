@@ -14,7 +14,7 @@ expect object DatabaseManager {
     suspend fun fetchTransactions(): Result<List<Transaction>>
     suspend fun fetchTransactionById(id: Int): Result<Transaction?>
     suspend fun fetchCategoryById(id: Int): Result<Category?>
-    suspend fun fetchCategories(): Result<List<Category>>
+    suspend fun fetchCategories(it: Any): Result<List<Category>>
     suspend fun getCategoryTotals(cycleId: Int): Result<Map<Category, Double>>
 
     suspend fun fetchCycle(): Result<BudgetCycle?>
