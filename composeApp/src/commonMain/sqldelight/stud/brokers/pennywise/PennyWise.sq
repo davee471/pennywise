@@ -1,0 +1,136 @@
+CREATE TABLE cycles(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    totalAllowance REAL NOT NULL,
+    startDate TEXT NOT NULL,
+    endDate TEXT NOT NULL
+);
+
+CREATE TABLE categories(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    iconName TEXT NOT NULL
+);
+
+CREATE TABLE transactions(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cycleId INTEGER NOT NULL,
+    categoryId INTEGER NOT NULL,
+    amount REAL NOT NULL,
+    type TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    FOREIGN KEY (cycleId) REFERENCES cycles(id),
+    FOREIGN KEY (categoryId) REFERENCES categories(id)
+);
+
+CREATE TABLE settings(
+    key TEXT PRIMARY KEY NOT NULL,
+    value TEXT NOT NULL
+);
+
+--settings queries
+--insert or update
+upsertSetting:
+INSERT OR REPLACE INTO settings(key,value)
+VALUES(?,?);
+
+fetchSetting:
+SELECT value FROM settings WHERE key = ?;
+
+-- cycle queries
+insertCycle:
+INSERT INTO cycles(totalAllowance, startDate, endDate)
+VALUES (?, ?, ?);
+
+updateCycleBudget:
+UPDATE cycles
+SET totalAllowance = ?
+WHERE id = ?;
+
+fetchActiveCycle:
+SELECT * FROM cycles
+ORDER BY id DESC
+LIMIT 1;
+
+deleteCycle:
+DELETE FROM cycles WHERE id = ?;
+
+-- category queries
+insertCategory:
+INSERT INTO categories(name, iconName)
+VALUES (?, ?);
+
+fetchCategories:
+SELECT * FROM categories;
+-- transaction queries
+insertTransaction:
+INSERT INTO transactions(cycleId, categoryId, amount, type, timestamp)
+VALUES (?, ?, ?, ?, ?);
+
+fetchTransactionById:
+SELECT
+    transactions.id,
+    transactions.cycleId,
+    transactions.type,
+    transactions.timestamp,
+    categories.id AS categoryId,
+    categories.name AS categoryName,
+    categories.iconName AS categoryIconName
+FROM transactions
+JOIN categories ON transactions.categoryId = categories.id
+WHERE transactions.id = ?;
+
+fetchTransactionsWithCategory:
+SELECT
+    transactions.id,
+    transactions.cycleId,
+    transactions.amount,
+    transactions.type,
+    transactions.timestamp,
+    categories.id AS categoryId,
+    categories.name AS categoryName,
+    categories.iconName AS categoryIconName
+FROM transactions
+JOIN categories ON transactions.categoryId = categories.id
+WHERE transactions.cycleId = ?
+ORDER BY transactions.timestamp DESC;
+
+deleteTransaction:
+DELETE FROM transactions WHERE id = ?;
+
+updateTransaction:
+UPDATE transactions
+SET amount = ?, categoryId = ?, type = ?
+WHERE id = ?;
+
+fetchExpenseTotalsByCategory:
+SELECT
+    categories.id AS categoryId,
+    categories.name AS categoryName,
+    categories.iconName AS categoryIconName,
+    SUM(transactions.amount) AS total
+FROM transactions
+JOIN categories ON transactions.categoryId = categories.id
+WHERE transactions.type = 'EXPENSE'
+AND transactions.cycleId = ?
+GROUP BY categories.id;
+
+deleteAllTransactions:
+DELETE FROM transactions;
+
+deleteAllCycles:
+DELETE FROM cycles;
+
+deleteAllCategories:
+DELETE FROM categories;
+
+
+
+
+
+
+
+
+
+
+
+

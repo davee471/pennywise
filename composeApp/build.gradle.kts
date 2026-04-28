@@ -7,6 +7,15 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    id("app.cash.sqldelight") version "2.0.2"
+}
+
+sqldelight {
+    databases {
+        create("PennyWiseDatabase") {
+            packageName.set("stud.brokers.pennywise")
+        }
+    }
 }
 
 kotlin {
@@ -33,6 +42,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.jetbrains.kotlinx.datetime)
+            implementation("app.cash.sqldelight:runtime:2.0.2")
+            implementation("app.cash.sqldelight:coroutines-extensions:2.0.2")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -40,6 +51,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation("app.cash.sqldelight:sqlite-driver:2.0.2")
         }
     }
 }
@@ -73,6 +85,7 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
+    implementation("app.cash.sqldelight:android-driver:2.0.2")
 }
 
 compose.desktop {
