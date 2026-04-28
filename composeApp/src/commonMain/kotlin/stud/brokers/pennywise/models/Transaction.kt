@@ -3,8 +3,8 @@ package stud.brokers.pennywise.models
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock
-
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 enum class TransactionType { EXPENSE, INCOME }
 
 data class Transaction(

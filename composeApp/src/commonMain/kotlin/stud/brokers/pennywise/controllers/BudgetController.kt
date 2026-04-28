@@ -1,24 +1,28 @@
 package stud.brokers.pennywise.controllers
+
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import stud.brokers.pennywise.models.*
 import  stud.brokers.pennywise.db.DatabaseManager
-class BudgetController() {
-    private val dbManager = DatabaseManager
+
+// TODO: Handle result-style returns
+
+class BudgetController(private val dbManager: DatabaseManager) {
+
     var activeCycle: BudgetCycle? = null
         private set
-    // Maru: fetchCycle() is suspend. Call it from viewModelScope.launch:
-//
-//          viewModelScope.launch {
-//                  budgetController.loadActiveCycle()
-//                  }
-//
-// Also, all functions that call dbManager need 'suspend' keyword.
+
     init {
-        activeCycle = dbManager.fetchCycle()
+        loadActiveCycle()
     }
-    fun initCycle(totalAmount: Double, start: LocalDate, end: LocalDate){
+
+    // TODO: implement loadactivecycle
+    suspend fun loadActiveCycle(){
+
+    }
+
+    suspend fun initCycle(totalAmount: Double, start: LocalDate, end: LocalDate){
         val cycle = BudgetCycle(
             totalAllowance = totalAmount,
             startDate = start,
@@ -27,23 +31,26 @@ class BudgetController() {
         dbManager.saveCycle(cycle)
         activeCycle = cycle
     }
-    fun getRemainingAllowance(): Double{
+    suspend fun getRemainingAllowance(): Double{
         val cycle = activeCycle?: return 0.0
         val spent = dbManager.fetchTransactions()
             .filter{it.type == TransactionType.EXPENSE}
             .sumOf{it.amount}
         return cycle.totalAllowance - spent
     }
-    fun getDailyLimit(): Double{
+
+    suspend fun getDailyLimit(): Double{
         val cycle = activeCycle?: return 0.0
         val remaining = getRemainingAllowance()
         return cycle.calculateLimit(remaining)
     }
-    fun addIncome(amount: Double){
+
+    suspend fun addIncome(amount: Double){
         val currentCycle = activeCycle?: return
         // TEMPORARY HANDLING OF TRANSACTION UNTIL WE FIGURE OUT CLEANER DECOUPLED WAY
         val tx = Transaction(
             amount = amount,
+            cycleId = currentCycle.id,
             type = TransactionType.INCOME,
             category = Category(0, "Top-up", "income")
         )
@@ -53,9 +60,10 @@ class BudgetController() {
         dbManager.saveCycle(updatedCycle)
         activeCycle = updatedCycle
     }
-    fun resetCycle(): Boolean{
+
+    suspend fun resetCycle(): Boolean{
         val currentCycle = activeCycle?: return true
-        val success = dbManager.deleteCycle([currentCycle.id](http://currentCycle.id))
+        val success = dbManager.deleteCycle(currentCycle.id)
             if(success){
                 activeCycle = null
             }
