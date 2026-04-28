@@ -61,6 +61,10 @@ VALUES (?, ?);
 
 fetchCategories:
 SELECT * FROM categories;
+
+fetchCategoryById:
+SELECT * FROM categories WHERE id = ?;
+
 -- transaction queries
 insertTransaction:
 INSERT INTO transactions(cycleId, categoryId, amount, type, timestamp)
@@ -70,6 +74,7 @@ fetchTransactionById:
 SELECT
     transactions.id,
     transactions.cycleId,
+    transactions.amount,
     transactions.type,
     transactions.timestamp,
     categories.id AS categoryId,
