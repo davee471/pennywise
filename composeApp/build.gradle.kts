@@ -89,4 +89,5 @@ compose.desktop {
 
 repositories {
     mavenCentral()
+    google()
 }
