@@ -7,7 +7,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 data class BudgetCycle(
-    val id: Int = 0,
+    val id: Long = 0,
     var totalAllowance: Double,
     val startDate: LocalDate,
     val endDate: LocalDate,

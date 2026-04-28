@@ -4,18 +4,25 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import stud.brokers.pennywise.models.*
+import  stud.brokers.pennywise.db.DatabaseManager
 
-class BudgetController() {
+// TODO: Handle result-style returns
 
-    private val dbManager = DatabaseManager
+class BudgetController(private val dbManager: DatabaseManager) {
+
     var activeCycle: BudgetCycle? = null
         private set
 
     init {
-        activeCycle = dbManager.fetchCycle()
+        loadActiveCycle()
     }
 
-    fun initCycle(totalAmount: Double, start: LocalDate, end: LocalDate){
+    // TODO: implement loadactivecycle
+    suspend fun loadActiveCycle(){
+
+    }
+
+    suspend fun initCycle(totalAmount: Double, start: LocalDate, end: LocalDate){
         val cycle = BudgetCycle(
             totalAllowance = totalAmount,
             startDate = start,
@@ -24,8 +31,7 @@ class BudgetController() {
         dbManager.saveCycle(cycle)
         activeCycle = cycle
     }
-
-    fun getRemainingAllowance(): Double{
+    suspend fun getRemainingAllowance(): Double{
         val cycle = activeCycle?: return 0.0
         val spent = dbManager.fetchTransactions()
             .filter{it.type == TransactionType.EXPENSE}
@@ -33,39 +39,34 @@ class BudgetController() {
         return cycle.totalAllowance - spent
     }
 
-    fun getDailyLimit(): Double{
+    suspend fun getDailyLimit(): Double{
         val cycle = activeCycle?: return 0.0
         val remaining = getRemainingAllowance()
         return cycle.calculateLimit(remaining)
     }
 
-    fun addIncome(amount: Double){
+    suspend fun addIncome(amount: Double){
         val currentCycle = activeCycle?: return
-
         // TEMPORARY HANDLING OF TRANSACTION UNTIL WE FIGURE OUT CLEANER DECOUPLED WAY
         val tx = Transaction(
             amount = amount,
+            cycleId = currentCycle.id,
             type = TransactionType.INCOME,
             category = Category(0, "Top-up", "income")
         )
         dbManager.saveTransaction(tx)
-
         val remaining = getRemainingAllowance()
         val updatedCycle = currentCycle.copy(totalAllowance = currentCycle.totalAllowance + amount)
-
         dbManager.saveCycle(updatedCycle)
         activeCycle = updatedCycle
     }
 
-    fun resetCycle(): Boolean{
+    suspend fun resetCycle(): Boolean{
         val currentCycle = activeCycle?: return true
         val success = dbManager.deleteCycle(currentCycle.id)
-
-        if(success){
-            activeCycle = null
-        }
-
-        return success
+            if(success){
+                activeCycle = null
+            }
+            return success
     }
-
 }

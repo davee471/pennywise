@@ -1,18 +1,21 @@
 package stud.brokers.pennywise.models
+
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Instant
-import kotlin.time.Clock
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+enum class TransactionType { EXPENSE, INCOME }
 
-enum class TransactionType {EXPENSE, INCOME}
 data class Transaction(
-    val id: Int = 0,
+    val id: Long = 0,
+    val cycleId: Long,
     val amount: Double,
     val type: TransactionType,
     val category: Category,
-    val timestamp: Instant = Clock.System.now(),
-    ) {
+    val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
+) {
     val date: LocalDate
-        get() = timestamp.toLocalDateTime(TimeZone.currentSystemDefault()).date
+        get() = Instant.fromEpochMilliseconds(timestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault()).date
 }

@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,21 +6,27 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    id("app.cash.sqldelight") version "2.0.2"
 }
 
 kotlin {
     androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "11"
+            }
         }
     }
-    
     jvm()
-    
+
     sourceSets {
+        val commonMain by getting {
+            kotlin.srcDir("build/generated/sqldelight/code/PennyWiseDatabase/commonMain")
+        }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+            implementation("app.cash.sqldelight:android-driver:2.0.2")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -33,6 +38,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.jetbrains.kotlinx.datetime)
+            implementation("app.cash.sqldelight:runtime:2.0.2")
+            implementation("app.cash.sqldelight:coroutines-extensions:2.0.2")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -40,14 +47,24 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation("app.cash.sqldelight:sqlite-driver:2.0.2")
         }
     }
 }
 
+
+sqldelight {
+    databases {
+        create("PennyWiseDatabase") {
+            packageName.set("stud.brokers.pennywise")
+            generateAsync.set(false)
+            srcDirs.setFrom("src/commonMain/sqldelight")
+        }
+    }
+}
 android {
     namespace = "stud.brokers.pennywise"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-
     defaultConfig {
         applicationId = "stud.brokers.pennywise"
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -78,7 +95,6 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "stud.brokers.pennywise.MainKt"
-
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "stud.brokers.pennywise"
@@ -88,6 +104,7 @@ compose.desktop {
 }
 
 repositories {
+    google()
     mavenCentral()
     google()
 }
