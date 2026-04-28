@@ -21,7 +21,8 @@ class TransactionController(private val dbManager: DatabaseManager) {
             cycleId = cycleId,
             amount = amount,
             type = TransactionType.EXPENSE,
-            category = category
+            category = category,
+            timestamp = System.currentTimeMillis(),
         )
         return dbManager.saveTransaction(transaction)
     }

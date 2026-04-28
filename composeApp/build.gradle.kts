@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
-    id("app.cash.sqldelight") version "2.0.2
+    id("app.cash.sqldelight") version "2.0.2"
 }
 
 kotlin {
@@ -20,6 +20,9 @@ kotlin {
     jvm()
 
     sourceSets {
+        val commonMain by getting {
+            kotlin.srcDir("build/generated/sqldelight/code/PennyWiseDatabase/commonMain")
+        }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
@@ -54,11 +57,11 @@ sqldelight {
     databases {
         create("PennyWiseDatabase") {
             packageName.set("stud.brokers.pennywise")
-            srcDirs("src/commonMain/sqldelight")
+            generateAsync.set(false)
+            srcDirs.setFrom("src/commonMain/sqldelight")
         }
     }
 }
-
 android {
     namespace = "stud.brokers.pennywise"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
