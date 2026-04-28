@@ -9,8 +9,6 @@ import kotlinx.datetime.LocalDateTime
 import stud.brokers.pennywise.models.*
 import  stud.brokers.pennywise.db.DatabaseManager
 
-// TODO: Handle result-style returns
-
 class BudgetController(private val dbManager: DatabaseManager) {
 
     var activeCycle: BudgetCycle? = null
