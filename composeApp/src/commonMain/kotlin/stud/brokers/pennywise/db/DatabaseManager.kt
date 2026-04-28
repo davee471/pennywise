@@ -12,14 +12,14 @@ expect object DatabaseManager {
     suspend fun saveCategory(cat: Category): Result<Unit>
 
     suspend fun fetchTransactions(): Result<List<Transaction>>
-    suspend fun fetchTransactionById(id: Int): Result<Transaction?>
-    suspend fun fetchCategoryById(id: Int): Result<Category?>
+    suspend fun fetchTransactionById(id: Long): Result<Transaction?>
+    suspend fun fetchCategoryById(id: Long): Result<Category?>
     suspend fun fetchCategories(it: Any): Result<List<Category>>
     suspend fun getCategoryTotals(cycleId: Int): Result<Map<Category, Double>>
 
     suspend fun fetchCycle(): Result<BudgetCycle?>
-    suspend fun deleteCycle(id: Int): Result<Unit>
-    suspend fun deleteTransaction(id: Int): Result<Unit>
+    suspend fun deleteCycle(id: Long): Result<Unit>
+    suspend fun deleteTransaction(id: Long): Result<Unit>
     suspend fun clearAll(): Result<Unit>
 
     suspend fun upsertSetting(key: String, value: String): Result<Unit>

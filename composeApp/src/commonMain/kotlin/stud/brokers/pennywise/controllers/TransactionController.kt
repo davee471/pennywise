@@ -12,7 +12,7 @@ class TransactionController {
 
     private val dbManager = DatabaseManager
 
-    suspend fun logExpense(amount: Double, category: Category, cycleId: Int): Result<Unit> {
+    suspend fun logExpense(amount: Double, category: Category, cycleId: Double): Result<Unit> {
         if (amount <= 0) {
             return Result.Error(
                 message = "Amount must be greater than 0",
@@ -30,7 +30,7 @@ class TransactionController {
         return dbManager.saveTransaction(transaction)
     }
 
-    suspend fun editTransaction(id: Int, newAmount: Double, newCategory: Category): Result<Unit> {
+    suspend fun editTransaction(id: Double, newAmount: Double, newCategory: Category): Result<Unit> {
         if (newAmount <= 0) {
             return Result.Error(
                 message = "Amount must be greater than 0",
@@ -62,7 +62,7 @@ class TransactionController {
     }
 
     suspend fun getHistory(
-        cycleId: Int,
+        cycleId: Long,
         category: Category? = null,
         dateRange: Pair<LocalDate, LocalDate>? = null
     ): Result<List<Transaction>> {
