@@ -40,7 +40,7 @@ kotlin {
             implementation(libs.jetbrains.kotlinx.datetime)
             implementation("app.cash.sqldelight:runtime:2.0.2")
             implementation("app.cash.sqldelight:coroutines-extensions:2.0.2")
-            implementation("androidx.compose.material:material-icons-extended:1.7.8")
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
