@@ -3,14 +3,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Settings
 
 @Composable
 fun NavBar(
-    selectedScreen: String,
-    onNavigate: (String) -> Unit
+    selectedScreen: String = "dashboard",
+    onNavigate: (String) -> Unit = {}
 ) {
     NavigationBar {
         NavigationBarItem(
@@ -30,7 +31,7 @@ fun NavBar(
         NavigationBarItem(
             selected = selectedScreen == "stats",
             onClick = { onNavigate("stats") },
-            icon = { Icon(Icons.Default.PieChart, contentDescription = null) },
+            icon = { Icon(Icons.Default.BarChart, contentDescription = null) },
             label = { Text("Stats") }
         )
 
