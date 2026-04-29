@@ -8,6 +8,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import stud.brokers.pennywise.models.*
 import  stud.brokers.pennywise.db.DatabaseManager
+import stud.brokers.pennywise.util.Result
 
 class BudgetController(private val dbManager: DatabaseManager) {
 
@@ -20,8 +21,8 @@ class BudgetController(private val dbManager: DatabaseManager) {
 
     suspend fun loadActiveCycle() {
         activeCycle = when (val result = dbManager.fetchCycle()) {
-            is stud.brokers.pennywise.util.Result.Success -> result.data
-            is stud.brokers.pennywise.util.Result.Error -> null
+            is Result.Success -> result.data
+            is Result.Error -> null
         }
     }
 
@@ -38,8 +39,8 @@ class BudgetController(private val dbManager: DatabaseManager) {
     suspend fun getRemainingAllowance(): Double {
         val cycle = activeCycle ?: return 0.0
         val transactions = when (val result = dbManager.fetchTransactions()) {
-            is stud.brokers.pennywise.util.Result.Success -> result.data
-            is stud.brokers.pennywise.util.Result.Error -> return 0.0
+            is Result.Success -> result.data
+            is Result.Error -> return 0.0
         }
         val spent = transactions
             .filter { it.type == TransactionType.EXPENSE }
@@ -63,7 +64,7 @@ class BudgetController(private val dbManager: DatabaseManager) {
             category = Category(0, "Top-up", "income")
         )
         dbManager.saveTransaction(tx)
-        val remaining = getRemainingAllowance()
+        getRemainingAllowance()
         val updatedCycle = currentCycle.copy(
             totalAllowance = currentCycle.totalAllowance + amount
         )
@@ -74,12 +75,12 @@ class BudgetController(private val dbManager: DatabaseManager) {
     suspend fun resetCycle(): Boolean {
         val currentCycle = activeCycle ?: return true
         return when (dbManager.deleteCycle(currentCycle.id)) {
-            is stud.brokers.pennywise.util.Result.Success -> {
+            is Result.Success -> {
                 activeCycle = null
                 true
             }
 
-            is stud.brokers.pennywise.util.Result.Error -> {
+            is Result.Error -> {
                 false
             }
         }
