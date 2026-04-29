@@ -10,8 +10,8 @@ import androidx.compose.material.icons.filled.Settings
 
 @Composable
 fun NavBar(
-    selectedScreen: String = "dashboard",
-    onNavigate: (String) -> Unit = {}
+    selectedScreen: String,
+    onNavigate: (String) -> Unit
 ) {
     NavigationBar {
         NavigationBarItem(
