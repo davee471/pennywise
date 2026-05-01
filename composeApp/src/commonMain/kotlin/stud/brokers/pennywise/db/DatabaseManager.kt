@@ -218,7 +218,7 @@ class DatabaseManager(driverFactory: DriverFactory) {
     suspend fun fetchAllSettings(): Result<Map<String, String>> = catchDbErrors {
         queries.fetchAllSettings()
             .executeAsList()
-            .associate { it.key to it.value }
+            .associate { it.key to it.value_ }
     }
 
     suspend fun fetchAllTransactions(): Result<List<Transaction>> = catchDbErrors {
