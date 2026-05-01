@@ -1,48 +1,129 @@
 package stud.brokers.pennywise
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import pennywise.composeapp.generated.resources.Res
-import pennywise.composeapp.generated.resources.compose_multiplatform
+import kotlinx.coroutines.launch
+import stud.brokers.pennywise.controllers.SettingsController
+import stud.brokers.pennywise.ui.components.NavBar
+import stud.brokers.pennywise.ui.components.PinMode
+import stud.brokers.pennywise.ui.components.PinOverlay
+import stud.brokers.pennywise.ui.screens.DashboardView
+import stud.brokers.pennywise.ui.screens.SettingsView
 
 @Composable
-@Preview
-fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+fun App(settingsController: SettingsController) {
+    val coroutineScope = rememberCoroutineScope()
+
+    var currentRoute by remember { mutableStateOf("dashboard") }
+    var isUnlocked by remember { mutableStateOf(!settingsController.isPinEnabled) }
+
+    // NEW: State for tracking if we are setting up a new PIN
+    var showPinSetup by remember { mutableStateOf(false) }
+
+    var isPinEnabled by remember { mutableStateOf(settingsController.isPinEnabled) }
+    var isNotificationsEnabled by remember { mutableStateOf(settingsController.isNotificationsEnabled) }
+    var currency by remember { mutableStateOf(settingsController.currencySymbol) }
+
+    // 1. App Startup Lock (VERIFY)
+    if (!isUnlocked && settingsController.isPinEnabled) {
+        PinOverlay(
+            mode = PinMode.VERIFY,
+            onPinEnter = { enteredPin ->
+                coroutineScope.launch {
+                    if (settingsController.verifyPin(enteredPin)) {
+                        isUnlocked = true
+                    }
                 }
+            },
+            onCancel = { /* No-op */ }
+        )
+        return
+    }
+
+    // 2. Security Setup Lock (SET) - Added here!
+    if (showPinSetup) {
+        PinOverlay(
+            mode = PinMode.SET,
+            onPinEnter = { newPin ->
+                coroutineScope.launch {
+                    // Save the REAL pin they just typed
+                    if (settingsController.togglePinLock(true, newPin)) {
+                        isPinEnabled = true
+                        showPinSetup = false // Hide the overlay
+                    }
+                }
+            },
+            onCancel = {
+                showPinSetup = false // Hide if they click cancel
+            }
+        )
+        return // Stop drawing the app underneath
+    }
+
+    Scaffold(
+        bottomBar = {
+            NavBar(
+                selectedScreen = currentRoute,
+                onNavigate = { route -> currentRoute = route }
+            )
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            when (currentRoute) {
+                "dashboard" -> DashboardView(
+                    dailyLimit = 150.0,
+                    isFinalDay = false,
+                    isLowBudget = false,
+                    pieChartData = mapOf("Food" to 300.0, "Transport" to 100.0),
+                    onLogExpenseClick = { },
+                    onLogIncomeClick = { }
+                )
+                "settings" -> SettingsView(
+                    isPinEnabled = isPinEnabled,
+                    isNotificationsEnabled = isNotificationsEnabled,
+                    currencySymbol = currency,
+                    onExportCsvClick = {
+                        coroutineScope.launch { settingsController.exportDataToCsv() }
+                    },
+
+                    // Added new toggle logic here!
+                    onTogglePinClick = { enabled ->
+                        if (enabled) {
+                            // User wants to turn it ON -> Show the setup screen!
+                            showPinSetup = true
+                        } else {
+                            // User wants to turn it OFF -> Just turn it off in the database
+                            coroutineScope.launch {
+                                if (settingsController.togglePinLock(false)) {
+                                    isPinEnabled = false
+                                }
+                            }
+                        }
+                    },
+
+                    onToggleNotificationsClick = { enabled ->
+                        coroutineScope.launch {
+                            if (settingsController.toggleNotifications(enabled)) {
+                                isNotificationsEnabled = enabled
+                            }
+                        }
+                    },
+                    onChangeCurrencyClick = { newCurrency ->
+                        coroutineScope.launch {
+                            if (settingsController.updateCurrency(newCurrency)) {
+                                currency = newCurrency
+                            }
+                        }
+                    },
+                    onResetCycleClick = {
+                        coroutineScope.launch { settingsController.performFullReset() }
+                    }
+                )
+                "history" -> { /* Add HistoryView later */ }
+                "stats" -> { /* Add StatsView later */ }
             }
         }
     }
