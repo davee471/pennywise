@@ -3,15 +3,19 @@ package stud.brokers.pennywise.controllers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import stud.brokers.pennywise.models.*
 import  stud.brokers.pennywise.db.DatabaseManager
 import stud.brokers.pennywise.util.Result
 
 class BudgetController(private val dbManager: DatabaseManager) {
 
+    enum class CycleStatus { NO_CYCLE, ACTIVE, FINAL_DAY, EXPIRED }
     var activeCycle: BudgetCycle? = null
         private set
 
@@ -23,6 +27,9 @@ class BudgetController(private val dbManager: DatabaseManager) {
         activeCycle = when (val result = dbManager.fetchCycle()) {
             is Result.Success -> result.data
             is Result.Error -> null
+        }
+        if(isCycleExpired){
+            handleExpiredCycle()
         }
     }
 
@@ -84,5 +91,32 @@ class BudgetController(private val dbManager: DatabaseManager) {
                 false
             }
         }
+    }
+
+    val isOnFinalDay: Boolean
+        get() {
+            val currentCycle = activeCycle?: return false
+            return currentCycle.remainingDays == 1
+        }
+
+    val isCycleExpired: Boolean
+        get() {
+            val currentCycle = activeCycle?: return false
+            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            return today > currentCycle.endDate
+        }
+
+    val cycleStatus: CycleStatus
+        get() = when {
+            activeCycle == null  -> CycleStatus.NO_CYCLE
+            isCycleExpired       -> CycleStatus.EXPIRED
+            isOnFinalDay         -> CycleStatus.FINAL_DAY
+            else                 -> CycleStatus.ACTIVE
+        }
+
+    private suspend fun handleExpiredCycle() {
+        val cycle = activeCycle ?: return
+        dbManager.deleteCycle(cycle.id)
+        activeCycle = null
     }
 }
