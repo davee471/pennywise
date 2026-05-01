@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 
 actual class ExportService(private val context: Context) {
     actual suspend fun exportToCsv(transactions: List<Transaction>): Result<Unit> {
-        return withContext(Dispatchers.io){
+        return withContext(Dispatchers.IO){
         try {
           val csv = buildCsv(transactions)
           val dir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
