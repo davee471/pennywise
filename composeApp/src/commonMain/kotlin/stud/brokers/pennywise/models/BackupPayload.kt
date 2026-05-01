@@ -6,16 +6,15 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import stud.brokers.pennywise.Transactions
 
-enum class TransactionType { EXPENSE, INCOME }
 @Serializable
-data class Transaction(
-    val id: Long = 0,
-    val cycleId: Long,
-    val amount: Double,
-    val type: TransactionType,
-    val category: Category,
+data class BackupPayload(
     val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
+    val categories: List<Category>,
+    val cycles: List<BudgetCycle>,
+    val transactions: List<Transaction>,
+    val settings: Map<String,String>
 ) {
     val date: LocalDate
         get() = Instant.fromEpochMilliseconds(timestamp)
