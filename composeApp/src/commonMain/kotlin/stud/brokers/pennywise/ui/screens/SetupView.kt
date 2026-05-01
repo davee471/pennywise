@@ -20,14 +20,46 @@ fun SetupView(budgetController: BudgetController, onSetupComplete: () -> Unit) {
     var startDate by remember { mutableStateOf(today) }
     var endDate by remember { mutableStateOf(today.plus(30, DateTimeUnit.DAY)) }
 
+    // State for which date we are currently picking
+    var pickingStartDate by remember { mutableStateOf(false) }
+    var pickingEndDate by remember { mutableStateOf(false) }
+
+    // Dialog for picking dates
+    if (pickingStartDate || pickingEndDate) {
+        val initialDate = if (pickingStartDate) startDate else endDate
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = initialDate.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+        )
+
+        DatePickerDialog(
+            onDismissRequest = { 
+                pickingStartDate = false
+                pickingEndDate = false 
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        val selectedDate = Instant.fromEpochMilliseconds(millis)
+                            .toLocalDateTime(TimeZone.currentSystemDefault()).date
+                        if (pickingStartDate) startDate = selectedDate else endDate = selectedDate
+                    }
+                    pickingStartDate = false
+                    pickingEndDate = false
+                }) { Text("OK") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Initialize Budget", style = MaterialTheme.typography.headlineSmall)
+        Text("Initialize Budget", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
             value = totalBudget,
@@ -37,31 +69,57 @@ fun SetupView(budgetController: BudgetController, onSetupComplete: () -> Unit) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Simple Date Selection (In a real app, use a DatePicker dialog)
-        Button(
-            onClick = { /* Trigger DatePicker for End Date */ },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("End Date: $endDate")
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(
+                onClick = { pickingStartDate = true },
+                modifier = Modifier.weight(1f)
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Start Date", style = MaterialTheme.typography.labelSmall)
+                    Text(startDate.toString())
+                }
+            }
+            OutlinedButton(
+                onClick = { pickingEndDate = true },
+                modifier = Modifier.weight(1f)
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("End Date", style = MaterialTheme.typography.labelSmall)
+                    Text(endDate.toString())
+                }
+            }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Validation  for dates
+        val amount = totalBudget.toDoubleOrNull() ?: 0.0
+        val isValid = amount > 0 && endDate > startDate
 
         Button(
             onClick = {
-                val amount = totalBudget.toDoubleOrNull() ?: 0.0
-                if (amount > 0) {
+                if (isValid) {
                     scope.launch {
                         budgetController.initCycle(amount, startDate, endDate)
                         onSetupComplete()
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            enabled = isValid,
+            modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("Continue")
+            Text("Continue", style = MaterialTheme.typography.titleMedium)
+        }
+        
+        if (!isValid && totalBudget.isNotEmpty()) {
+            Text(
+                text = if (amount <= 0) "Amount must be greater than 0" else "End date must be after start date",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
     }
 }

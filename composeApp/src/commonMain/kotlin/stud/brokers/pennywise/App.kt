@@ -11,6 +11,7 @@ import stud.brokers.pennywise.controllers.BudgetController
 import stud.brokers.pennywise.controllers.TransactionController
 import stud.brokers.pennywise.db.DatabaseManager
 import stud.brokers.pennywise.db.DriverFactory
+import stud.brokers.pennywise.models.Transaction
 import stud.brokers.pennywise.ui.screens.*
 
 sealed class Screen {
@@ -28,6 +29,8 @@ fun App(driverFactory: DriverFactory) {
     val txController = remember { TransactionController(dbManager) }
 
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Dashboard) }
+    var transactionToEdit by remember { mutableStateOf<Transaction?>(null) }
+    
     val activeCycle = budgetController.activeCycle
 
     // Add default categories if the database is empty
@@ -54,13 +57,19 @@ fun App(driverFactory: DriverFactory) {
                     NavigationBar {
                         NavigationBarItem(
                             selected = currentScreen == Screen.Dashboard,
-                            onClick = { currentScreen = Screen.Dashboard },
+                            onClick = { 
+                                transactionToEdit = null
+                                currentScreen = Screen.Dashboard 
+                            },
                             icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
                             label = { Text("Dashboard") }
                         )
                         NavigationBarItem(
                             selected = currentScreen == Screen.History,
-                            onClick = { currentScreen = Screen.History },
+                            onClick = { 
+                                transactionToEdit = null
+                                currentScreen = Screen.History 
+                            },
                             icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "History") },
                             label = { Text("History") }
                         )
@@ -85,17 +94,35 @@ fun App(driverFactory: DriverFactory) {
                                 isFinalDay = false,
                                 isLowBudget = false,
                                 pieChartData = categoryTotals,
-                                onLogExpenseClick = { currentScreen = Screen.Transaction },
+                                onLogExpenseClick = { 
+                                    transactionToEdit = null
+                                    currentScreen = Screen.Transaction 
+                                },
                                 onLogIncomeClick = {
                                     // Handle income logging here
                                 }
                             )
                         }
-                        Screen.History -> HistoryView(txController, activeCycle.id)
+                        Screen.History -> HistoryView(
+                            txController = txController, 
+                            cycleId = activeCycle.id,
+                            onEditTransaction = { tx ->
+                                transactionToEdit = tx
+                                currentScreen = Screen.Transaction
+                            }
+                        )
                         Screen.Transaction -> TransactionView(
                             txController = txController,
                             cycleId = activeCycle.id,
-                            onTransactionSaved = { currentScreen = Screen.Dashboard }
+                            transactionToEdit = transactionToEdit,
+                            onTransactionSaved = { 
+                                transactionToEdit = null
+                                currentScreen = Screen.Dashboard 
+                            },
+                            onCancel = {
+                                transactionToEdit = null
+                                currentScreen = Screen.Dashboard
+                            }
                         )
                         Screen.Setup -> {}
                     }
