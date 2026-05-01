@@ -90,4 +90,11 @@ class SettingsController(
         val cycleReset = budgetController.resetCycle()
         return dbCleared && cycleReset
     }
+
+    suspend fun verifyPin(input: String): Boolean {
+        return when (val res = dbManager.fetchSetting(SettingsKeys.PIN_HASH)) {
+            is Result.Success -> res.data == input.hashCode().toString()
+            else -> false
+        }
+    }
 }
