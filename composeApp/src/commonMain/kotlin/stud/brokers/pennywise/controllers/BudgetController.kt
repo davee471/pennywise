@@ -6,29 +6,33 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import stud.brokers.pennywise.db.DatabaseManager
-import stud.brokers.pennywise.models.BudgetCycle
-import stud.brokers.pennywise.models.Category
-import stud.brokers.pennywise.models.Transaction
-import stud.brokers.pennywise.models.TransactionType
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import stud.brokers.pennywise.models.*
+import  stud.brokers.pennywise.db.DatabaseManager
 import stud.brokers.pennywise.util.Result
 
 class BudgetController(private val dbManager: DatabaseManager) {
 
-    // Reactive state for the current budget cycle
+    enum class CycleStatus { NO_CYCLE, ACTIVE, FINAL_DAY, EXPIRED }
     var activeCycle by mutableStateOf<BudgetCycle?>(null)
         private set
 
     init {
-        // Load the cycle from database on startup
-        CoroutineScope(Dispatchers.Default).launch { loadActiveCycle() }
+        CoroutineScope(Dispatchers.Default).launch{loadActiveCycle()}
     }
 
     suspend fun loadActiveCycle() {
         activeCycle = when (val result = dbManager.fetchCycle()) {
             is Result.Success -> result.data
             is Result.Error -> null
+        }
+        if(isCycleExpired){
+            handleExpiredCycle()
         }
     }
 
@@ -39,21 +43,24 @@ class BudgetController(private val dbManager: DatabaseManager) {
             endDate = end
         )
         dbManager.saveCycle(cycle)
-        // Refresh the active cycle to get the generated ID
-        loadActiveCycle()
+        activeCycle = cycle
     }
 
     suspend fun getRemainingAllowance(): Double {
+        val spent = getTotalSpent()
         val cycle = activeCycle ?: return 0.0
-        val transactions = when (val result = dbManager.fetchTransactions()) {
+        return cycle.totalAllowance - spent
+    }
+
+    suspend fun getTotalSpent(): Double {
+        val cycle = activeCycle ?: return 0.0
+        val transactions = when (val result = dbManager.fetchTransactions(cycle.id)) {
             is Result.Success -> result.data
             is Result.Error -> return 0.0
         }
-        // Calculate total spent from expense transactions
-        val spent = transactions
+        return transactions
             .filter { it.type == TransactionType.EXPENSE }
             .sumOf { it.amount }
-        return cycle.totalAllowance - spent
     }
 
     suspend fun getDailyLimit(): Double {
@@ -64,6 +71,7 @@ class BudgetController(private val dbManager: DatabaseManager) {
 
     suspend fun addIncome(amount: Double) {
         val currentCycle = activeCycle ?: return
+        // TEMPORARY HANDLING OF TRANSACTION UNTIL WE FIGURE OUT CLEANER DECOUPLED WAY
         val tx = Transaction(
             amount = amount,
             cycleId = currentCycle.id,
@@ -71,7 +79,7 @@ class BudgetController(private val dbManager: DatabaseManager) {
             category = Category(0, "Top-up", "income")
         )
         dbManager.saveTransaction(tx)
-        // Update the cycle total allowance in the database
+        getRemainingAllowance()
         val updatedCycle = currentCycle.copy(
             totalAllowance = currentCycle.totalAllowance + amount
         )
@@ -86,7 +94,42 @@ class BudgetController(private val dbManager: DatabaseManager) {
                 activeCycle = null
                 true
             }
-            is Result.Error -> false
+
+            is Result.Error -> {
+                false
+            }
         }
+    }
+
+    val isOnFinalDay: Boolean
+        get() {
+            val currentCycle = activeCycle?: return false
+            return currentCycle.remainingDays == 1
+        }
+
+    val isCycleExpired: Boolean
+        get() {
+            val currentCycle = activeCycle?: return false
+            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            return today > currentCycle.endDate
+        }
+
+    val cycleStatus: CycleStatus
+        get() = when {
+            activeCycle == null  -> CycleStatus.NO_CYCLE
+            isCycleExpired       -> CycleStatus.EXPIRED
+            isOnFinalDay         -> CycleStatus.FINAL_DAY
+            else                 -> CycleStatus.ACTIVE
+        }
+
+    suspend fun checkLowBudget(): Boolean {
+        val currentCycle = activeCycle ?: return false
+        return getRemainingAllowance() <= (0.2 * currentCycle.totalAllowance)
+    }
+
+    private suspend fun handleExpiredCycle() {
+        val cycle = activeCycle ?: return
+        dbManager.deleteCycle(cycle.id)
+        activeCycle = null
     }
 }
