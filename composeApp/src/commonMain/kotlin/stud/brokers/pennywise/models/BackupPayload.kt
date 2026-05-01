@@ -5,12 +5,15 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
+import stud.brokers.pennywise.Transactions
 
+@Serializable
 data class BackupPayload(
     val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
     val categories: List<Category>,
     val cycles: List<BudgetCycle>,
-    val transaction: List<Transaction>,
+    val transactions: List<Transaction>,
     val settings: Map<String,String>
 ) {
     val date: LocalDate

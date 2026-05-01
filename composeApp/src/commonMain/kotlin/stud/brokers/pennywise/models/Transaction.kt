@@ -5,8 +5,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-enum class TransactionType { EXPENSE, INCOME }
+import kotlinx.serialization.Serializable
 
+enum class TransactionType { EXPENSE, INCOME }
+@Serializable
 data class Transaction(
     val id: Long = 0,
     val cycleId: Long,

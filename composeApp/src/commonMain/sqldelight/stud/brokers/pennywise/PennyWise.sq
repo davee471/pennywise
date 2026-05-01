@@ -55,6 +55,10 @@ SELECT * FROM cycles
 ORDER BY id DESC
 LIMIT 1;
 
+fetchAllCycles:
+SELECT * FROM cycles
+ORDER BY id DESC;
+
 deleteCycle:
 DELETE FROM cycles WHERE id = ?;
 
@@ -77,9 +81,14 @@ VALUES (?, ?, ?, ?, ?);
 --fetching all transactions for backups
 fetchAllTransactions:
 SELECT
-    transactions.*,
-    categories.name AS categoryName,
-    categories.iconName AS categoryIconName
+   transactions.id,
+   transactions.cycleId,
+   transactions.amount,
+   transactions.type,
+   transactions.timestamp,
+   categories.id AS categroyId,
+   categories.name AS categoryName,
+   categories.iconName AS categoryIconName
 FROM transactions
 JOIN categories ON transactions.categoryId = categories.id
 ORDER BY transactions.timestamp DESC;
@@ -143,3 +152,14 @@ deleteAllCategories:
 DELETE FROM categories;
 
 
+restoreCategory:
+INSERT INTO categories(id, name, iconName)
+VALUES (?, ?, ?);
+
+restoreCycle:
+INSERT INTO cycles(id, totalAllowance, startDate, endDate)
+VALUES (?, ?, ?, ?);
+
+restoreTransaction:
+INSERT INTO transactions(id, cycleId, categoryId, amount, type, timestamp)
+VALUES (?, ?, ?, ?, ?, ?);

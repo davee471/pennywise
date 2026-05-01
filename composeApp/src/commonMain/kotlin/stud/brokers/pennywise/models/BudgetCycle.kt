@@ -4,8 +4,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
 import kotlin.time.Clock
-
+@Serializable
 data class BudgetCycle(
     val id: Long = 0,
     var totalAllowance: Double,

@@ -8,13 +8,16 @@ import stud.brokers.pennywise.models.*
 import stud.brokers.pennywise.util.Result
 import stud.brokers.pennywise.util.Result.ErrorType
 import kotlinx.datetime.LocalDate
+import stud.brokers.pennywise.FetchAllTransactions
+import stud.brokers.pennywise.Settings
+import stud.brokers.pennywise.util.unwrap
 
 class DatabaseManager(driverFactory: DriverFactory) {
 
     private val database = PennyWiseDatabase(driverFactory.createDriver())
     private val queries = database.pennyWiseQueries
 
-    private fun <T> catchDbErrors(block: () -> T): Result<T> {
+    private suspend fun <T> catchDbErrors(block: suspend () -> T): Result<T> {
         return try {
             Result.Success(block())
         } catch (e: Exception) {
@@ -44,6 +47,7 @@ class DatabaseManager(driverFactory: DriverFactory) {
         )
     }
 
+
     // ============ CYCLE OPERATIONS =============
 
     suspend fun saveCycle(cycle: BudgetCycle): Result<Unit> = catchDbErrors {
@@ -65,6 +69,19 @@ class DatabaseManager(driverFactory: DriverFactory) {
                 endDate = LocalDate.parse(it.endDate)
             )
         }
+    }
+
+    suspend fun fetchAllCycles(): Result<List<BudgetCycle>> = catchDbErrors {
+        queries.fetchAllCycles()
+            .executeAsList()
+            .map { bc ->
+                BudgetCycle(
+                    id = bc.id,
+                    totalAllowance = bc.totalAllowance,
+                    startDate = LocalDate.parse(bc.startDate),
+                    endDate = LocalDate.parse(bc.endDate)
+                )
+            }
     }
 
     suspend fun deleteCycle(id: Long): Result<Unit> = catchDbErrors {
@@ -214,7 +231,7 @@ class DatabaseManager(driverFactory: DriverFactory) {
                     amount = tx.amount,
                     type = TransactionType.valueOf(tx.type),
                     category = Category(
-                        id = tx.categoryId,
+                        id = tx.categroyId,
                         name = tx.categoryName,
                         iconName = tx.categoryIconName
                     ),
@@ -223,6 +240,54 @@ class DatabaseManager(driverFactory: DriverFactory) {
             }
     }
 
+    //=== Build the backup object====
 
+    suspend fun fetchAllThenBuildBackup(): Result<BackupPayload> = catchDbErrors {
+        val categories: List<Category> = fetchCategories().unwrap()
+        val cycles: List<BudgetCycle> = fetchAllCycles().unwrap()
+        val transactions: List<Transaction> = fetchAllTransactions().unwrap()
+        val settings: Map<String, String> = fetchAllSettings().unwrap()
+
+        BackupPayload(
+            categories = categories,
+            cycles = cycles,
+            transactions = transactions,
+            settings = settings
+        )
+
+    }
+
+    // === Load The backup object from the file ===
+
+    suspend fun restoreFromBackup(payload: BackupPayload): Result<Unit> = catchDbErrors {
+        queries.transaction{
+            queries.deleteAllTransactions()
+            queries.deleteAllCycles()
+            queries.deleteAllCategories()
+
+            payload.categories.forEach { cat->
+                queries.restoreCategory(id=cat.id,name = cat.name, iconName = cat.iconName)
+            }
+
+            payload.cycles.forEach { c ->
+                queries.restoreCycle(id = c.id,totalAllowance = c.totalAllowance, startDate = c.startDate.toString(), endDate = c.endDate.toString())
+            }
+
+            payload.transactions.forEach { tx ->
+                queries.restoreTransaction(
+                    id = tx.id,
+                    cycleId = tx.cycleId,
+                    categoryId = tx.category.id,
+                    amount = tx.amount,
+                    type = tx.type.name,
+                    timestamp = tx.timestamp,
+                )
+            }
+
+            payload.settings.forEach { (key,value) ->
+                queries.upsertSetting(key,value)
+            }
+        }
+    }
 
 }
