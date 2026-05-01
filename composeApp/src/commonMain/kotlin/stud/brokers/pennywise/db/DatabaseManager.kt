@@ -192,4 +192,37 @@ class DatabaseManager(driverFactory: DriverFactory) {
         queries.deleteAllCategories()
         Result.Success(Unit)
     }
+
+   // ===== Backup Operations ==========
+
+
+    // === Retrive settings for backup===
+
+    suspend fun fetchAllSettings(): Result<Map<String, String>> = catchDbErrors {
+        queries.fetchAllSettings()
+            .executeAsList()
+            .associate { it.key to it.value }
+    }
+
+    suspend fun fetchAllTransactions(): Result<List<Transaction>> = catchDbErrors {
+        queries.fetchAllTransactions()
+            .executeAsList()
+            .map { tx ->
+                Transaction(
+                    id = tx.id,
+                    cycleId = tx.cycleId,
+                    amount = tx.amount,
+                    type = TransactionType.valueOf(tx.type),
+                    category = Category(
+                        id = tx.categoryId,
+                        name = tx.categoryName,
+                        iconName = tx.categoryIconName
+                    ),
+                    timestamp = tx.timestamp
+                )
+            }
+    }
+
+
+
 }

@@ -36,6 +36,10 @@ VALUES(?,?);
 fetchSetting:
 SELECT value FROM settings WHERE key = ?;
 
+--retrieve all settings
+fetchAllSettings:
+SELECT * FROM settings;
+
 -- cycle queries
 insertCycle:
 INSERT INTO cycles(totalAllowance, startDate, endDate)
@@ -69,6 +73,16 @@ SELECT * FROM categories WHERE id = ?;
 insertTransaction:
 INSERT INTO transactions(cycleId, categoryId, amount, type, timestamp)
 VALUES (?, ?, ?, ?, ?);
+
+--fetching all transactions for backups
+fetchAllTransactions:
+SELECT
+    transactions.*,
+    categories.name AS categoryName,
+    categories.iconName AS categoryIconName
+FROM transactions
+JOIN categories ON transactions.categoryId = categories.id
+ORDER BY transactions.timestamp DESC;
 
 fetchTransactionById:
 SELECT
@@ -127,15 +141,5 @@ DELETE FROM cycles;
 
 deleteAllCategories:
 DELETE FROM categories;
-
-
-
-
-
-
-
-
-
-
 
 
