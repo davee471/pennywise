@@ -56,7 +56,7 @@ fun PinOverlay(
 
             Text(
                 text = if (mode == PinMode.SET)
-                    "Establish a 4-digit code to encrypt your logs"
+                    "Enter your desired 4-digit code"
                 else "Verify your identity to access PennyWise",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -70,7 +70,6 @@ fun PinOverlay(
             OutlinedTextField(
                 value = pin,
                 onValueChange = { input ->
-                    // Logic: Limit to 4 digits
                     if (input.length <= 4 && input.all { it.isDigit() }) {
                         pin = input
                     }
