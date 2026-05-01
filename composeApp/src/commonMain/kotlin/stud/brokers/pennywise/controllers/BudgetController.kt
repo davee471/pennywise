@@ -1,22 +1,28 @@
 package stud.brokers.pennywise.controllers
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import stud.brokers.pennywise.models.*
-import  stud.brokers.pennywise.db.DatabaseManager
+import stud.brokers.pennywise.db.DatabaseManager
+import stud.brokers.pennywise.models.BudgetCycle
+import stud.brokers.pennywise.models.TransactionType
 import stud.brokers.pennywise.util.Result
+import kotlin.math.truncate
 
-class BudgetController(private val dbManager: DatabaseManager) {
+class BudgetController(
+    private val dbManager: DatabaseManager,
+    private val txController: TransactionController
+) {
 
     enum class CycleStatus { NO_CYCLE, ACTIVE, FINAL_DAY, EXPIRED }
-    var activeCycle: BudgetCycle? = null
+    var activeCycle by mutableStateOf<BudgetCycle?>(null)
         private set
 
     init {
@@ -34,49 +40,43 @@ class BudgetController(private val dbManager: DatabaseManager) {
     }
 
     suspend fun initCycle(totalAmount: Double, start: LocalDate, end: LocalDate) {
-        val cycle = BudgetCycle(
+        val currentCycle = BudgetCycle(
             totalAllowance = totalAmount,
             startDate = start,
             endDate = end
         )
-        dbManager.saveCycle(cycle)
-        activeCycle = cycle
+        dbManager.saveCycle(currentCycle)
+        loadActiveCycle()
     }
 
     suspend fun getRemainingAllowance(): Double {
-        val cycle = activeCycle ?: return 0.0
-        val transactions = when (val result = dbManager.fetchTransactions()) {
+        val currentCycle = activeCycle ?: return 0.0
+        val transactions = when (val result = txController.getHistory(currentCycle.id)) {
             is Result.Success -> result.data
             is Result.Error -> return 0.0
         }
         val spent = transactions
             .filter { it.type == TransactionType.EXPENSE }
             .sumOf { it.amount }
-        return cycle.totalAllowance - spent
+        return currentCycle.totalAllowance - spent
     }
 
     suspend fun getDailyLimit(): Double {
-        val cycle = activeCycle ?: return 0.0
+        val currentCycle = activeCycle ?: return 0.0
         val remaining = getRemainingAllowance()
-        return cycle.calculateLimit(remaining)
+        val limit = currentCycle.calculateLimit(remaining)
+        return truncate(limit * 100) / 100
     }
 
     suspend fun addIncome(amount: Double) {
         val currentCycle = activeCycle ?: return
-        // TEMPORARY HANDLING OF TRANSACTION UNTIL WE FIGURE OUT CLEANER DECOUPLED WAY
-        val tx = Transaction(
-            amount = amount,
-            cycleId = currentCycle.id,
-            type = TransactionType.INCOME,
-            category = Category(0, "Top-up", "income")
-        )
-        dbManager.saveTransaction(tx)
-        getRemainingAllowance()
+        txController.logIncome(amount, currentCycle.id)
+
         val updatedCycle = currentCycle.copy(
             totalAllowance = currentCycle.totalAllowance + amount
         )
         dbManager.updateCycleBudget(updatedCycle.id, updatedCycle.totalAllowance)
-        activeCycle = updatedCycle
+        loadActiveCycle()
     }
 
     suspend fun resetCycle(): Boolean {
