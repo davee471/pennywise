@@ -60,21 +60,18 @@ class SettingsController(
         return false
     }
 
-    suspend fun togglePinLock(enabled: Boolean, pinHash: String? = null): Boolean {
+    suspend fun togglePinLock(enabled: Boolean, rawPin: String? = null): Boolean {
         val res = dbManager.upsertSetting(SettingsKeys.PIN_ENABLED, enabled.toString())
         if (res is Result.Success) {
             isPinEnabled = enabled
-            if (pinHash != null) {
-                dbManager.upsertSetting(SettingsKeys.PIN_HASH, pinHash)
+            if (rawPin != null) {
+                // hash the PIN before saving to the db
+                val hashedPin = rawPin.hashCode().toString()
+                dbManager.upsertSetting(SettingsKeys.PIN_HASH, hashedPin)
             }
             return true
         }
         return false
-    }
-
-    suspend fun addCategory(name: String, iconName: String): Result<Unit> {
-        val newCategory = Category(id = 0, name = name, iconName = iconName)
-        return dbManager.saveCategory(newCategory)
     }
 
     suspend fun exportDataToCsv(): Result<Unit> {
