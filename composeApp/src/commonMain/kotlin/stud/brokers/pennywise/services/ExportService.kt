@@ -7,3 +7,4 @@ import stud.brokers.pennywise.util.Result
 expect class ExportService {
     suspend fun exportToCsv(transactions: List<Transaction>): Result<Unit>
 }
+

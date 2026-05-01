@@ -11,9 +11,10 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
-    }
+    androidTarget()
     jvm()
+
+    jvmToolchain(17)
 
     sourceSets {
         val commonMain by getting {
@@ -38,6 +39,7 @@ kotlin {
             implementation("app.cash.sqldelight:runtime:2.0.2")
             implementation("app.cash.sqldelight:coroutines-extensions:2.0.2")
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation("org.jetbrains.kotlinx:kotlinx-html:0.11.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -81,8 +83,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -102,7 +104,7 @@ compose.desktop {
 }
 
 repositories {
-    google()
     mavenCentral()
     google()
+    maven { url = uri("https://jitpack.io") }
 }
