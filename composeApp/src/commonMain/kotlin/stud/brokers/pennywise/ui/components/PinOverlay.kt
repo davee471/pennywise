@@ -1,7 +1,5 @@
 package stud.brokers.pennywise.ui.components
 
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -9,8 +7,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -31,9 +29,9 @@ fun PinOverlay(
 ) {
     var pin by remember { mutableStateOf("") }
 
-    val title = when (mode) {
-        PinMode.SET -> "Please Enter The Desired 4-digit PIN"
-        PinMode.VERIFY -> "Please Enter Your 4-digit PIN"
+    val (title, buttonText) = when (mode) {
+        PinMode.SET -> "Create Your Security PIN" to "LOCK APP"
+        PinMode.VERIFY -> "Enter Security PIN" to "UNLOCK APP"
     }
 
     Surface(
@@ -43,46 +41,49 @@ fun PinOverlay(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 48.dp),
+                .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // --- HEADER SECTION ---
+            // --- HEADER ---
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
             )
 
-            if (mode == PinMode.SET) {
-                Text(
-                    text = "Used to unlock the app later",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
+            Text(
+                text = if (mode == PinMode.SET)
+                    "Enter your desired 4-digit code"
+                else "Verify your identity to access PennyWise",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp),
+                textAlign = TextAlign.Center
+            )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
-            // --- PIN INPUT FIELD ---
+            // --- THE INPUT ---
             OutlinedTextField(
                 value = pin,
                 onValueChange = { input ->
-                    // Logic: Only allow digits and limit to 4 characters
                     if (input.length <= 4 && input.all { it.isDigit() }) {
                         pin = input
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(64.dp),
+                    .height(72.dp),
                 textStyle = TextStyle(
                     textAlign = TextAlign.Center,
-                    fontSize = 28.sp,
-                    letterSpacing = 10.sp, // Adds space between digits/stars
-                    color = Color.Black
+                    fontSize = 32.sp,
+                    letterSpacing = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary
                 ),
-                // This creates the masking effect for verification
                 visualTransformation = if (mode == PinMode.VERIFY) {
                     PasswordVisualTransformation()
                 } else {
@@ -90,35 +91,37 @@ fun PinOverlay(
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black,
-                    cursorColor = Color.Black
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
                 )
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(56.dp))
 
-            // --- THE UNLOCK BUTTON ---
+            // --- THE ACTION ---
             Button(
                 onClick = { if (pin.length == 4) onPinEnter(pin) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(2.dp, Color.Black),
+                shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Black,
-                    disabledContainerColor = Color.Transparent,
-                    disabledContentColor = Color.Gray
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f)
                 ),
                 enabled = pin.length == 4
             ) {
                 Text(
-                    text = "UNLOCK",
-                    style = MaterialTheme.typography.titleLarge
+                    text = buttonText,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        letterSpacing = 1.25.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
             }
         }
