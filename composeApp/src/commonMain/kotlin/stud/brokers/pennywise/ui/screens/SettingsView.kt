@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -165,22 +164,5 @@ fun SettingsCard(
             Spacer(modifier = Modifier.height(16.dp))
             content()
         }
-    }
-}
-
-@Preview
-@Composable
-fun SettingsViewPreview() {
-    MaterialTheme {
-        SettingsView(
-            isPinEnabled = true,
-            isNotificationsEnabled = false,
-            currencySymbol = "EGP",
-            onExportCsvClick = { },
-            onTogglePinClick = { },
-            onToggleNotificationsClick = { },
-            onChangeCurrencyClick = { },
-            onResetCycleClick = { }
-        )
     }
 }
