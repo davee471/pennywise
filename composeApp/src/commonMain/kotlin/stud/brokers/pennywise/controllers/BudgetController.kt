@@ -114,6 +114,11 @@ class BudgetController(private val dbManager: DatabaseManager) {
             else                 -> CycleStatus.ACTIVE
         }
 
+    suspend fun checkLowBudget(): Boolean {
+        val currentCycle = activeCycle ?: return false
+        return getRemainingAllowance() <= (0.2 * currentCycle.totalAllowance)
+    }
+
     private suspend fun handleExpiredCycle() {
         val cycle = activeCycle ?: return
         dbManager.deleteCycle(cycle.id)
