@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import stud.brokers.pennywise.controllers.BudgetController
 import stud.brokers.pennywise.controllers.SettingsController
+import stud.brokers.pennywise.controllers.TransactionController
 import stud.brokers.pennywise.db.DatabaseManager
 import stud.brokers.pennywise.db.DriverFactory
 import stud.brokers.pennywise.services.ExportService
@@ -19,7 +20,8 @@ class MainActivity : ComponentActivity() {
         val driverFactory = DriverFactory(this)
         val exportService = ExportService()
         val dbManager = DatabaseManager(driverFactory)
-        val budgetController = BudgetController(dbManager)
+        val txController = TransactionController(dbManager)
+        val budgetController = BudgetController(dbManager, txController)
         val settingsController = SettingsController(dbManager, budgetController, exportService)
 
         setContent {
