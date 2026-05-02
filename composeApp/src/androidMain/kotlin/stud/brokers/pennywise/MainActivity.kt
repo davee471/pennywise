@@ -26,7 +26,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             // Pass it in!
-            App(settingsController = settingsController)
+            App(settingsController = settingsController,
+                budgetController = budgetController,
+                txController = txController)
         }
     }
 }
