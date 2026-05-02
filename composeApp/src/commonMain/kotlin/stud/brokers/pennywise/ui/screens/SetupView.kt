@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import stud.brokers.pennywise.controllers.BudgetController
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupView(budgetController: BudgetController, onSetupComplete: () -> Unit) {
     val scope = rememberCoroutineScope()
@@ -32,9 +33,9 @@ fun SetupView(budgetController: BudgetController, onSetupComplete: () -> Unit) {
         )
 
         DatePickerDialog(
-            onDismissRequest = { 
+            onDismissRequest = {
                 pickingStartDate = false
-                pickingEndDate = false 
+                pickingEndDate = false
             },
             confirmButton = {
                 TextButton(onClick = {

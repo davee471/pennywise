@@ -200,3 +200,17 @@ fun TransactionItem(
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
     }
 }
+
+
+
+
+// Private helper to safely extract Result data without touching core files
+private fun <T> stud.brokers.pennywise.util.Result<T>.getOrNull(): T? {
+    return when (this) {
+        is stud.brokers.pennywise.util.Result.Success<*> -> {
+            @Suppress("UNCHECKED_CAST")
+            this.data as T
+        }
+        is stud.brokers.pennywise.util.Result.Error -> null
+    }
+}
