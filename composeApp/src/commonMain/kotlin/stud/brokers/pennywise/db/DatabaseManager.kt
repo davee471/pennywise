@@ -17,6 +17,16 @@ class DatabaseManager(driverFactory: DriverFactory) {
     private val database = PennyWiseDatabase(driverFactory.createDriver())
     private val queries = database.pennyWiseQueries
 
+    init {
+        // Auto-seed default categories if the database is completely empty
+        if (queries.fetchCategories().executeAsList().isEmpty()) {
+            queries.insertCategory(name = "Food", iconName = "restaurant")
+            queries.insertCategory(name = "Transport", iconName = "directions_car")
+            queries.insertCategory(name = "Utilities", iconName = "bolt")
+            queries.insertCategory(name = "Entertainment", iconName = "movie")
+        }
+    }
+
     private suspend fun <T> catchDbErrors(block: suspend () -> T): Result<T> {
         return try {
             Result.Success(block())
