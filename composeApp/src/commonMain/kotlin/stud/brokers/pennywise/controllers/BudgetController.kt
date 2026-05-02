@@ -86,14 +86,32 @@ class BudgetController(
 
         val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
-        val remaining = getRemainingAllowance()
+        // 1. Get all expenses
+        val transactions = when (val result = txController.getHistory(currentCycle.id)) {
+            is Result.Success -> result.data
+            else -> emptyList()
+        }
+        val expenses = transactions.filter { it.type == TransactionType.EXPENSE }
 
-        isLowBudget = remaining <= (0.2 * currentCycle.totalAllowance)
+        // 2. Separate past expenses from today's expenses
+        val spentBeforeTodayAmount = expenses.filter { it.date < today }.sumOf { it.amount }
+        spentToday = expenses.filter { it.date == today }.sumOf { it.amount } // Actually updates your variable!
 
-        val baseLimit = currentCycle.calculateLimit(remaining)
-        val rawDayLimit = baseLimit - spentToday
+        // 3. Update low budget warning (using total remaining)
+        val totalRemaining = currentCycle.totalAllowance - expenses.sumOf { it.amount }
+        isLowBudget = totalRemaining <= (0.2 * currentCycle.totalAllowance)
+
+        // 4. Calculate the true daily limit!
+        val remainingBeforeToday = currentCycle.totalAllowance - spentBeforeTodayAmount
+        val baseLimit = currentCycle.calculateLimit(remainingBeforeToday) // e.g. 3000 / 30 = 100
+        val rawDayLimit = baseLimit - spentToday // e.g. 100 - 50 = 50
 
         dailyLimit = (truncate(rawDayLimit * 100) / 100).coerceAtLeast(0.0)
+    }
+
+    suspend fun getDailyLimit(): Double {
+        refreshSpentToday() // Force a fresh calculation
+        return dailyLimit
     }
 
     suspend fun initCycle(totalAmount: Double, start: LocalDate, end: LocalDate) {
@@ -104,14 +122,6 @@ class BudgetController(
         )
         dbManager.saveCycle(currentCycle)
         loadActiveCycle()
-    }
-
-    suspend fun getDailyLimit(): Double {
-        val currentCycle = activeCycle ?: return 0.0
-        val remaining = getRemainingAllowance()
-        val totalLimit = currentCycle.calculateLimit(remaining)
-        val dayLimit = totalLimit - spentToday
-        return truncate(dayLimit * 100) / 100
     }
 
     suspend fun addIncome(amount: Double) {

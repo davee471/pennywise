@@ -115,7 +115,7 @@ fun App(
                     // 2. Fetch fresh data every time we visit the Dashboard
                     LaunchedEffect(currentRoute, budgetController.activeCycle) {
                         dailyLimit = budgetController.getDailyLimit()
-                        isLowBudget = budgetController.checkLowBudget()
+                        isLowBudget = budgetController.isLowBudget
 
                         // Calculate real Pie Chart data from History
                         val res = txController.getHistory(activeCycleId)
@@ -135,7 +135,7 @@ fun App(
                     DashboardView(
                         dailyLimit = dailyLimit,
                         isFinalDay = budgetController.isOnFinalDay,
-                        isLowBudget = isLowBudget,
+                        isLowBudget = budgetController.isLowBudget,
                         pieChartData = pieChartData,
                         onLogExpenseClick = { currentRoute = "transaction" },
                         onLogIncomeClick = { showIncomeDialog = true }
@@ -165,8 +165,7 @@ fun App(
 
                                             // Refresh the dashboard numbers instantly
                                             dailyLimit = budgetController.getDailyLimit()
-                                            isLowBudget = budgetController.checkLowBudget()
-
+                                            isLowBudget = budgetController.isLowBudget
                                             showIncomeDialog = false
                                             incomeInput = "" // Clear for next time
                                         }
@@ -184,6 +183,7 @@ fun App(
 
                 "transaction" -> TransactionView(
                     txController = txController,
+                    budgetController = budgetController,
                     cycleId = activeCycleId,
                     transactionToEdit = transactionToEdit,
                     onTransactionSaved = {

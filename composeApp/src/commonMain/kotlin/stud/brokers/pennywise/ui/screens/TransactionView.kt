@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import stud.brokers.pennywise.controllers.TransactionController
 import stud.brokers.pennywise.models.Category
 import stud.brokers.pennywise.models.Transaction
+import stud.brokers.pennywise.controllers.BudgetController
 
 /**
  * TransactionView is a Composable screen that allows users to log new expenses
@@ -32,6 +33,7 @@ import stud.brokers.pennywise.models.Transaction
 @Composable
 fun TransactionView(
     txController: TransactionController,
+    budgetController: BudgetController,
     cycleId: Long,
     transactionToEdit: Transaction? = null,
     onTransactionSaved: () -> Unit,
