@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import stud.brokers.pennywise.controllers.BudgetController
 import stud.brokers.pennywise.controllers.TransactionController
 import stud.brokers.pennywise.models.Category
 import stud.brokers.pennywise.models.Transaction
@@ -31,6 +32,7 @@ import stud.brokers.pennywise.models.Transaction
  */
 @Composable
 fun TransactionView(
+    budgetController: BudgetController,
     txController: TransactionController,
     cycleId: Long,
     transactionToEdit: Transaction? = null,
@@ -72,7 +74,7 @@ fun TransactionView(
                         scope.launch {
                             // Determine whether to log a new expense or update an existing one
                             if (transactionToEdit == null) {
-                                txController.logExpense(valAmount, category, cycleId)
+                                budgetController.logExpense(valAmount, category)
                             } else {
                                 txController.editTransaction(transactionToEdit.id, valAmount, category)
                             }

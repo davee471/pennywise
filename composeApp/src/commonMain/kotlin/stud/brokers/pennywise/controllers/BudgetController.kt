@@ -107,11 +107,12 @@ class BudgetController(
     }
 
     suspend fun getDailyLimit(): Double {
-        val currentCycle = activeCycle ?: return 0.0
-        val remaining = getRemainingAllowance()
-        val totalLimit = currentCycle.calculateLimit(remaining)
-        val dayLimit = totalLimit - spentToday
-        return truncate(dayLimit * 100) / 100
+        refreshSpentToday()
+        return dailyLimit
+    }
+
+    suspend fun isLowOnBudget(): Boolean {
+        return isLowBudget
     }
 
     suspend fun addIncome(amount: Double) {

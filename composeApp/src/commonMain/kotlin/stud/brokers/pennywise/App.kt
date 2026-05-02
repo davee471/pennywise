@@ -20,6 +20,7 @@ import stud.brokers.pennywise.ui.components.NavBar
 import stud.brokers.pennywise.ui.components.PinMode
 import stud.brokers.pennywise.ui.components.PinOverlay
 import stud.brokers.pennywise.ui.screens.*
+import stud.brokers.pennywise.util.Result
 
 @Composable
 fun App(
@@ -115,12 +116,12 @@ fun App(
                     // 2. Fetch fresh data every time we visit the Dashboard
                     LaunchedEffect(currentRoute, budgetController.activeCycle) {
                         dailyLimit = budgetController.getDailyLimit()
-                        isLowBudget = budgetController.checkLowBudget()
+                        isLowBudget = budgetController.isLowOnBudget()
 
                         // Calculate real Pie Chart data from History
                         val res = txController.getHistory(activeCycleId)
                         val transactions =
-                            if (res is stud.brokers.pennywise.util.Result.Success<*>) {
+                            if (res is Result.Success<*>) {
                                 @Suppress("UNCHECKED_CAST")
                                 res.data as List<Transaction>
                             } else emptyList()
@@ -165,7 +166,7 @@ fun App(
 
                                             // Refresh the dashboard numbers instantly
                                             dailyLimit = budgetController.getDailyLimit()
-                                            isLowBudget = budgetController.checkLowBudget()
+                                            isLowBudget = budgetController.isLowOnBudget()
 
                                             showIncomeDialog = false
                                             incomeInput = "" // Clear for next time
@@ -183,6 +184,7 @@ fun App(
                 }
 
                 "transaction" -> TransactionView(
+                    budgetController = budgetController,
                     txController = txController,
                     cycleId = activeCycleId,
                     transactionToEdit = transactionToEdit,
