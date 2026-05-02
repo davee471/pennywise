@@ -90,8 +90,10 @@ class BudgetController(
 
         isLowBudget = remaining <= (0.2 * currentCycle.totalAllowance)
 
-        val rawLimit = currentCycle.calculateLimit(remaining)
-        dailyLimit = truncate((rawLimit - spentToday) * 100) / 100
+        val baseLimit = currentCycle.calculateLimit(remaining)
+        val rawDayLimit = baseLimit - spentToday
+
+        dailyLimit = (truncate(rawDayLimit * 100) / 100).coerceAtLeast(0.0)
     }
 
     suspend fun initCycle(totalAmount: Double, start: LocalDate, end: LocalDate) {
