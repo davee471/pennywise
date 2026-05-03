@@ -1,40 +1,39 @@
-This is a Kotlin Multiplatform project targeting Android, Desktop (JVM).
+# PennyWise
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+**PennyWise** is an in-development lightweight, high-performance personal finance manager built with **Kotlin Multiplatform** and **Compose**. It focuses on "under the hood" systems logic to provide users with a reactive, secure, and data-driven budgeting experience.
 
-### Build and Run Android Application
+## Key Features
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+*   **Reactive Budgeting API:** A custom-built internal API that orchestrates financial data between a local SQLite database and a reactive UI layer using the Single Source of Truth (SSOT) pattern.
+*   **Dynamic Daily Limits:** Implements automated spending calculations that adjust in real-time based on current allowance, spent-today metrics, and negative-balance coercion logic.
+*   **Multi-Layered Security:** Integrated PIN authentication system featuring a state-driven verification and setup flow to protect user financial data.
+*   **Asynchronous Logic Orchestration:** Engineered lifecycle-aware data streams to manage background database operations, ensuring the main UI thread remains responsive while synchronizing financial state updates.
+*   **Consistent Error Handling:** Uses a functional `Result` wrapper across all controllers to ensure type-safe error propagation and application stability.
 
-### Build and Run Desktop (JVM) Application
+## Tech Stack
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+*   **Language:** Kotlin
+*   **UI Framework:** Compose Multiplatform
+*   **Architecture:** Model-View-Controller (MVC) with Reactive State Management
+*   **Local Storage:** SQLite
+*   **Build System:** Gradle
 
----
+## Architectural Highlights
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+### **The Controller API Layer**
+The core of PennyWise is the `BudgetController`, which acts as a **Facade API**. It abstracts the complexity of database transactions and business logic into simple, observable properties
+
+### **Defensive Programming**
+The application is designed to handle edge cases gracefully:
+* **Overspending**: Daily limits are coerced to $0.0$ if the budget is exceeded, maintaining a clean UI while preserving mathematical accuracy in the backend.
+* **Cycle Transitions**: Automated detection and handling of expired budget cycles and final-day warnings.
+
+## How to Run
+
+1.  Clone the repository:
+```bash
+git clone https://github.com/davee471/pennywise.git
+```
+2.  Open the project in **Android Studio** or **IntelliJ IDEA**.
+3.  Ensure you have the latest **Kotlin** and **Compose** plugins installed.
+4.  Run the application on an Android Emulator or Desktop (JVM) target.
