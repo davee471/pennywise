@@ -11,20 +11,14 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
-    }
+    androidTarget()
     jvm()
 
+    jvmToolchain(17)
     sourceSets {
-        val commonMain by getting {
-            kotlin.srcDir("build/generated/sqldelight/code/PennyWiseDatabase/commonMain")
-        }
-        androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
-            implementation(libs.androidx.activity.compose)
-            implementation("app.cash.sqldelight:android-driver:2.0.2")
-        }
-        commonMain.dependencies {
+    val commonMain by getting {
+        kotlin.srcDir("build/generated/sqldelight/code/PennyWiseDatabase/commonMain")
+        dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -38,17 +32,34 @@ kotlin {
             implementation("app.cash.sqldelight:runtime:2.0.2")
             implementation("app.cash.sqldelight:coroutines-extensions:2.0.2")
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation("org.jetbrains.kotlinx:kotlinx-html:0.11.0")
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
+    }
+
+    val androidMain by getting {
+        dependencies {
+            implementation(libs.compose.uiToolingPreview)
+            implementation(libs.androidx.activity.compose)
+            implementation("app.cash.sqldelight:android-driver:2.0.2")
         }
-        jvmMain.dependencies {
+    }
+
+    val jvmMain by getting {
+        dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation("app.cash.sqldelight:sqlite-driver:2.0.2")
         }
     }
+
+    val commonTest by getting {
+        dependencies {
+            implementation(libs.kotlin.test)
+        }
+    }
 }
+
+    }
 
 
 sqldelight {
@@ -81,8 +92,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -102,7 +113,7 @@ compose.desktop {
 }
 
 repositories {
-    google()
     mavenCentral()
     google()
+    maven { url = uri("https://jitpack.io") }
 }

@@ -1,3 +1,22 @@
+
+-- =============================================================
+-- PennyWise.sq — SQLDelight schema and queries
+-- =============================================================
+-- SQLDelight reads this file and generates type-safe Kotlin
+-- query functions in PennyWiseQueries.kt at build time.
+-- All queries are accessed via DatabaseManager through the
+-- generated `database.pennyWiseQueries` object.
+-- =============================================================
+
+-- -------------------------------------------------------------
+-- TABLES
+-- -------------------------------------------------------------
+
+-- Stores budget cycles. Each cycle represents a time period
+-- (e.g. a month) with a spending allowance.
+-- startDate and endDate are stored as strings ("yyyy-MM-dd")
+-- and parsed back to LocalDate in DatabaseManager.
+
 CREATE TABLE cycles(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     totalAllowance REAL NOT NULL,
@@ -5,80 +24,122 @@ CREATE TABLE cycles(
     endDate TEXT NOT NULL
 );
 
+
+-- Stores transaction categories (e.g. Food, Transport).
+-- Default categories are seeded in DatabaseManager.init if the table is empty.
+-- Users can add custom categories via TransactionController.addCategory().
 CREATE TABLE categories(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    iconName TEXT NOT NULL
+    iconName TEXT NOT NULL   -- Material icon name string used by the UI
 );
 
+-- Stores individual financial transactions (expenses and income).
+-- cycleId and categoryId are foreign keys — categories and cycles
+-- must exist before transactions that reference them can be inserted.
+-- This ordering is enforced in DatabaseManager.restoreFromBackup().
 CREATE TABLE transactions(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     cycleId INTEGER NOT NULL,
     categoryId INTEGER NOT NULL,
     amount REAL NOT NULL,
-    type TEXT NOT NULL,
-    timestamp INTEGER NOT NULL,
+    type TEXT NOT NULL,          -- "EXPENSE" or "INCOME" (TransactionType enum name)
+    timestamp INTEGER NOT NULL,  -- Unix epoch milliseconds
     FOREIGN KEY (cycleId) REFERENCES cycles(id),
     FOREIGN KEY (categoryId) REFERENCES categories(id)
 );
 
+-- Stores app settings as key-value pairs.
+-- Keys are defined as constants in SettingsKeys.kt.
+-- Examples: pin_enabled, pin_hash, currency_symbol, notifications_enabled.
 CREATE TABLE settings(
     key TEXT PRIMARY KEY NOT NULL,
     value TEXT NOT NULL
 );
 
---settings queries
---insert or update
-upsertSetting:
-INSERT OR REPLACE INTO settings(key,value)
-VALUES(?,?);
+-- -------------------------------------------------------------
+-- SETTINGS QUERIES
+-- -------------------------------------------------------------
 
+-- Inserts a new setting or replaces the value if the key already exists.
+-- Used by DatabaseManager.upsertSetting() and DatabaseManager.restoreFromBackup().
+upsertSetting:
+INSERT OR REPLACE INTO settings(key, value)
+VALUES(?, ?);
+
+-- Fetches the value for a single setting key.
+-- Returns null (executeAsOneOrNull) if the key does not exist.
 fetchSetting:
 SELECT value FROM settings WHERE key = ?;
 
---retrieve all settings
+-- Fetches all settings as key-value rows.
+-- Used by DatabaseManager.fetchAllSettings() for backup assembly.
 fetchAllSettings:
 SELECT * FROM settings;
 
--- cycle queries
+-- -------------------------------------------------------------
+-- CYCLE QUERIES
+-- -------------------------------------------------------------
+
+-- Inserts a new budget cycle. ID is auto-assigned by SQLite.
 insertCycle:
 INSERT INTO cycles(totalAllowance, startDate, endDate)
 VALUES (?, ?, ?);
 
+-- Updates only the spending limit of an existing cycle.
+-- Used by BudgetController when the user tops up mid-cycle (US #13).
 updateCycleBudget:
 UPDATE cycles
 SET totalAllowance = ?
 WHERE id = ?;
 
+-- Fetches the most recently created cycle (highest id), treated as the active cycle.
+-- Returns one row or null if no cycles exist.
 fetchActiveCycle:
 SELECT * FROM cycles
 ORDER BY id DESC
 LIMIT 1;
 
+-- Fetches all cycles ordered by most recent first.
+-- Used by DatabaseManager.fetchAllCycles() for backup assembly.
 fetchAllCycles:
 SELECT * FROM cycles
 ORDER BY id DESC;
 
+-- Deletes a cycle by ID. Does NOT cascade-delete its transactions.
 deleteCycle:
 DELETE FROM cycles WHERE id = ?;
 
--- category queries
+-- -------------------------------------------------------------
+-- CATEGORY QUERIES
+-- -------------------------------------------------------------
+
+-- Inserts a new category. ID is auto-assigned by SQLite.
 insertCategory:
 INSERT INTO categories(name, iconName)
 VALUES (?, ?);
 
+-- Fetches all categories (default + user-defined).
 fetchCategories:
 SELECT * FROM categories;
 
+-- Fetches a single category by ID. Returns null if not found.
 fetchCategoryById:
 SELECT * FROM categories WHERE id = ?;
 
--- transaction queries
+-- -------------------------------------------------------------
+-- TRANSACTION QUERIES
+-- -------------------------------------------------------------
+
+-- Inserts a new transaction. ID is auto-assigned by SQLite.
 insertTransaction:
 INSERT INTO transactions(cycleId, categoryId, amount, type, timestamp)
 VALUES (?, ?, ?, ?, ?);
 
---fetching all transactions for backups
+-- Fetches all transactions across all cycles joined with their category data.
+-- Used by DatabaseManager.fetchAllTransactions() for backup assembly.
+-- Note: "" is a typo in the column alias — preserved for compatibility
+-- with the generated FetchAllTransactions type in DatabaseManager.fetchAllTransactions().
 fetchAllTransactions:
 SELECT
    transactions.id,
@@ -86,13 +147,15 @@ SELECT
    transactions.amount,
    transactions.type,
    transactions.timestamp,
-   categories.id AS categroyId,
+   categories.id AS categoryId,
    categories.name AS categoryName,
    categories.iconName AS categoryIconName
 FROM transactions
 JOIN categories ON transactions.categoryId = categories.id
 ORDER BY transactions.timestamp DESC;
 
+-- Fetches a single transaction by ID joined with its category.
+-- Used by TransactionController.editTransaction() to load before updating.
 fetchTransactionById:
 SELECT
     transactions.id,
@@ -107,6 +170,8 @@ FROM transactions
 JOIN categories ON transactions.categoryId = categories.id
 WHERE transactions.id = ?;
 
+-- Fetches all transactions for a specific cycle joined with their category data.
+-- Used by DatabaseManager.fetchTransactions() for the active cycle view.
 fetchTransactionsWithCategory:
 SELECT
     transactions.id,
@@ -122,14 +187,20 @@ JOIN categories ON transactions.categoryId = categories.id
 WHERE transactions.cycleId = ?
 ORDER BY transactions.timestamp DESC;
 
+-- Deletes a single transaction by ID.
 deleteTransaction:
 DELETE FROM transactions WHERE id = ?;
 
+-- Updates amount, category, and type of an existing transaction.
+-- Used by DatabaseManager.updateTransaction().
 updateTransaction:
 UPDATE transactions
 SET amount = ?, categoryId = ?, type = ?
 WHERE id = ?;
 
+-- Aggregates total expense amounts grouped by category for a given cycle.
+-- Only counts EXPENSE type transactions.
+-- Used by DatabaseManager.getCategoryTotals() for pie chart data (US #4).
 fetchExpenseTotalsByCategory:
 SELECT
     categories.id AS categoryId,
@@ -142,6 +213,11 @@ WHERE transactions.type = 'EXPENSE'
 AND transactions.cycleId = ?
 GROUP BY categories.id;
 
+-- -------------------------------------------------------------
+-- RESET QUERIES
+-- Used by DatabaseManager.clearAll() and restoreFromBackup()
+-- -------------------------------------------------------------
+
 deleteAllTransactions:
 DELETE FROM transactions;
 
@@ -151,15 +227,26 @@ DELETE FROM cycles;
 deleteAllCategories:
 DELETE FROM categories;
 
+-- -------------------------------------------------------------
+-- RESTORE QUERIES
+-- Used exclusively by DatabaseManager.restoreFromBackup().
+-- These INSERT with explicit IDs to preserve original foreign key
+-- relationships from the backup. Restore order must be:
+-- categories → cycles → transactions → settings.
+-- -------------------------------------------------------------
 
+-- Restores a category with its original ID.
 restoreCategory:
 INSERT INTO categories(id, name, iconName)
 VALUES (?, ?, ?);
 
+-- Restores a cycle with its original ID.
 restoreCycle:
 INSERT INTO cycles(id, totalAllowance, startDate, endDate)
 VALUES (?, ?, ?, ?);
 
+-- Restores a transaction with its original ID, preserving all foreign key references.
 restoreTransaction:
 INSERT INTO transactions(id, cycleId, categoryId, amount, type, timestamp)
 VALUES (?, ?, ?, ?, ?, ?);
+

@@ -8,7 +8,6 @@ import stud.brokers.pennywise.models.Category
 import stud.brokers.pennywise.services.ExportService
 import stud.brokers.pennywise.util.Result
 import stud.brokers.pennywise.util.SettingsKeys
-
 class SettingsController(
     private val dbManager: DatabaseManager,
     private val budgetController: BudgetController,
@@ -76,11 +75,7 @@ class SettingsController(
 
     suspend fun exportDataToCsv(): Result<Unit> {
         return when (val txResult = dbManager.fetchTransactions()) {
-            is Result.Success -> {
-                // Ensure your ExportService has an exportToCSV(transactions) function
-                // exportService.exportToCSV(txResult.data)
-                Result.Success(Unit)
-            }
+            is Result.Success -> exportService.exportToCsv(txResult.data)
             is Result.Error -> Result.Error(txResult.message, txResult.type)
         }
     }

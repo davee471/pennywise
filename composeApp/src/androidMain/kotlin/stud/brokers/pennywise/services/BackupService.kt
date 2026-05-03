@@ -1,47 +1,94 @@
 package stud.brokers.pennywise.services
 
-import stud.brokers.pennywise.models.BackupPayload
-import kotlinx.serialization.*
 import android.content.Context
+import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import stud.brokers.pennywise.models.BackupPayload
 import stud.brokers.pennywise.util.Result
 import stud.brokers.pennywise.util.Result.ErrorType
-import java.io.File
 
-actual class BackupService(private val context: Context){
-    private val BACKUP_FILE_NAME = "internal_backup.json"
-    private val json = Json {
-        prettyPrint = true;
-        ignoreUnknownKeys = true
-    }
-    private fun <T> catchErrors(block: () -> T): stud.brokers.pennywise.util.Result<T> {
-        return try {
-            stud.brokers.pennywise.util.Result.Success(block())
-        } catch (e: Exception) {
-            Result.Error(
-                message = e.message ?: "Backup error",
-                type = ErrorType.FILESYSTEM
-            )
-        }
-    }
+/**
+ * Android implementation of [BackupService].
+ *
+ * Snapshots are written to the app's private internal storage at
+ * `filesDir/snapshots/internal_backup.json`. This path is only accessible to the app — no storage
+ * permissions are required.
+ *
+ * Only one snapshot is kept at a time. Each [createSnapshot] call overwrites the previous file. All
+ * file I/O runs on [Dispatchers.IO].
+ *
+ * @param context Android [Context] used to resolve [Context.filesDir].
+ */
+actual class BackupService(private val context: Context) {
 
-    actual suspend fun createSnapshot(payload: BackupPayload): Result<Unit> = catchErrors {
-        val dir = File(context.filesDir, "snapshots")
-        if(!dir.exists()) dir.mkdirs()
+  /** The snapshot filename. */
+  private val BACKUP_FILE_NAME = "internal_backup.json"
 
-        val file = File(dir,BACKUP_FILE_NAME)
-        val jsonString = json.encodeToString(payload)
-        file.writeText(jsonString)
-    }
-    actual suspend fun loadLastSnapshot(): Result<BackupPayload?> = catchErrors {
-        val dir = File(context.filesDir,"snapshots")
-        val file = File(dir,BACKUP_FILE_NAME)
+  /**
+   * Lazy-resolved snapshot directory. Created on first access if it does not exist. Path:
+   * `<filesDir>/snapshots/`
+   */
+  private val snapshotDir by lazy { File(context.filesDir, "snapshots") }
 
-        if(!file.exists()) {
-            return@catchErrors null
-        } else {
-            val jsonString = file.readText()
-            json.decodeFromString<BackupPayload>(jsonString)
-        }
+  /**
+   * JSON serializer configured with:
+   * - [prettyPrint] for human-readable output if the user ever inspects the file.
+   * - [ignoreUnknownKeys] for forward compatibility if new fields are added.
+   * - [coerceInputValues] to handle null values in older backups gracefully.
+   */
+  private val json = Json {
+    prettyPrint = true
+    ignoreUnknownKeys = true
+    coerceInputValues = true
+  }
+
+  /**
+   * Wraps a file I/O operation in a try/catch on [Dispatchers.IO]. Any [Throwable] is caught and
+   * returned as [Result.Error] with [ErrorType.FILESYSTEM]. Uses [Throwable] instead of [Exception]
+   * to also catch [OutOfMemoryError] on large backups.
+   */
+  private suspend fun <T> catchErrors(block: suspend () -> T): Result<T> {
+    return withContext(Dispatchers.IO) {
+      try {
+        Result.Success(block())
+      } catch (e: Throwable) {
+        Result.Error(message = e.message ?: "Backup error", type = ErrorType.FILESYSTEM)
+      }
     }
+  }
+
+  /**
+   * Serializes [payload] to JSON and writes it to `filesDir/snapshots/internal_backup.json`.
+   * Creates the snapshots directory if it does not exist yet.
+   *
+   * @param payload The [BackupPayload] to persist.
+   * @return [Result.Success] with [Unit] on success, or [Result.Error] with [ErrorType.FILESYSTEM]
+   * if the directory could not be created or the file could not be written.
+   */
+  actual suspend fun createSnapshot(payload: BackupPayload): Result<Unit> = catchErrors {
+    if (!snapshotDir.exists()) snapshotDir.mkdirs()
+
+    val file = File(snapshotDir, BACKUP_FILE_NAME)
+    val jsonString = json.encodeToString(payload)
+    file.writeText(jsonString)
+  }
+
+  /**
+   * Reads and deserializes the last snapshot from `filesDir/snapshots/internal_backup.json`.
+   *
+   * @return [Result.Success] containing the [BackupPayload], or `null` if no snapshot file exists
+   * yet. Returns [Result.Error] if the file exists but cannot be read or parsed.
+   */
+  actual suspend fun loadLastSnapshot(): Result<BackupPayload?> = catchErrors {
+    val file = File(snapshotDir, BACKUP_FILE_NAME)
+
+    if (!file.exists()) {
+      null
+    } else {
+      val jsonString = file.readText()
+      json.decodeFromString<BackupPayload>(jsonString)
+    }
+  }
 }
