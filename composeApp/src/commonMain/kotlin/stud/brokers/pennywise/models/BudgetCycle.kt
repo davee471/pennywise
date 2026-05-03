@@ -1,29 +1,29 @@
 package stud.brokers.pennywise.models
 
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
-import kotlin.time.Clock
+
 @Serializable
 data class BudgetCycle(
-    val id: Long = 0,
-    var totalAllowance: Double,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
-){
-    val totalDays: Int
-        get() = startDate.daysUntil(endDate)
+        val id: Long = 0,
+        var totalAllowance: Double,
+        val startDate: LocalDate,
+        val endDate: LocalDate,
+) {
+  val totalDays: Int
+    get() = startDate.daysUntil(endDate)
 
-    val remainingDays: Int
-        get() {
-            val today = Clock.System.now()
-                .toLocalDateTime(TimeZone.currentSystemDefault()).date
-            return today.daysUntil(endDate).coerceAtLeast(1)
-        }
-
-    fun calculateLimit(balance: Double): Double{
-        return balance / remainingDays
+  val remainingDays: Int
+    get() {
+      val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+      return today.daysUntil(endDate).coerceAtLeast(1)
     }
+
+  fun calculateLimit(balance: Double): Double {
+    return balance / remainingDays
+  }
 }

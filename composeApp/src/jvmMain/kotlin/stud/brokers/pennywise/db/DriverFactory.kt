@@ -1,10 +1,18 @@
 package stud.brokers.pennywise.db
 
 import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import java.io.File
 import stud.brokers.pennywise.PennyWiseDatabase
-import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 
+/**
+ * JVM/Desktop implementation of [DriverFactory].
+ *
+ * Uses [JdbcSqliteDriver] to connect to a local `pennywise.db` file in the working directory.
+ * Unlike [AndroidSqliteDriver], the JDBC driver does NOT call [PennyWiseDatabase.Schema.create]
+ * automatically — this implementation checks whether the file exists before connecting, and only
+ * creates the schema on a brand-new database to avoid wiping existing data.
+ */
 actual class DriverFactory {
   actual fun createDriver(): SqlDriver {
     val dbFile = File("pennywise.db")
@@ -21,4 +29,3 @@ actual class DriverFactory {
     return driver
   }
 }
-

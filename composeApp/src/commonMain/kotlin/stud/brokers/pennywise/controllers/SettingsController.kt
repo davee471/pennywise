@@ -75,10 +75,7 @@ class SettingsController(
 
     suspend fun exportDataToCsv(): Result<Unit> {
         return when (val txResult = dbManager.fetchTransactions()) {
-            is Result.Success -> {
-                exportService.exportToCsv(txResult.data)
-                Result.Success(Unit)
-            }
+            is Result.Success -> exportService.exportToCsv(txResult.data)
             is Result.Error -> Result.Error(txResult.message, txResult.type)
         }
     }
