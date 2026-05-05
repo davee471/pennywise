@@ -5,18 +5,22 @@ import androidx.compose.ui.window.application
 import stud.brokers.pennywise.controllers.BudgetController
 import stud.brokers.pennywise.controllers.SettingsController
 import stud.brokers.pennywise.controllers.TransactionController
+import stud.brokers.pennywise.controllers.BackupController
 import stud.brokers.pennywise.db.DatabaseManager
 import stud.brokers.pennywise.db.DriverFactory
 import stud.brokers.pennywise.services.ExportService
+import stud.brokers.pennywise.services.BackupService
 
 fun main() = application {
     // Build the controllers
     val driverFactory = DriverFactory()
     val exportService = ExportService()
+    val backupService = BackupService()
     val dbManager = DatabaseManager(driverFactory)
     val txController = TransactionController(dbManager)
     val budgetController = BudgetController(dbManager, txController = txController)
-    val settingsController = SettingsController(dbManager, budgetController, exportService)
+    val backupController = BackupController(dbManager, backupService)
+    val settingsController = SettingsController(dbManager, budgetController, exportService, backupController)
 
     Window(
         onCloseRequest = ::exitApplication,

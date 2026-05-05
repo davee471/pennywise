@@ -47,7 +47,7 @@ class BudgetController(
     var isLowBudget by mutableStateOf(false)
         private set
 
-    private suspend fun loadActiveCycle() {
+    suspend fun loadActiveCycle() {
         activeCycle = when (val result = dbManager.fetchCycle()) {
             is Result.Success -> result.data
             is Result.Error -> null

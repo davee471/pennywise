@@ -10,8 +10,8 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 /**
  * JVM/Desktop implementation of [ExportService].
  *
- * Writes CSV files to `~/Documents/` in the user's home directory. Creates the Documents directory
- * if it does not exist. Each export produces a new timestamped file — existing exports are never
+ * Writes PDF files to `~/Documents/` in the user's home directory. Creates the Documents directory
+ * if it does not exist. Each export produces a new timestamped PDF file — existing exports are never
  * overwritten. All file I/O runs on [Dispatchers.IO].
  */
 actual class ExportService {

@@ -10,21 +10,24 @@ import stud.brokers.pennywise.util.Result
 /**
  * JVM/Desktop implementation of [BackupService].
  *
- * Snapshots are written to `~/.pennywise/snapshot/internal_backup.json` in the user's home
- * directory. This path is hidden by convention (leading dot) to avoid cluttering the home directory
- * while still being user-accessible if needed.
+ * Snapshots are written to `~/Documents/pennywise_backup.json` in the user's home
+ * directory.
  *
  * Only one snapshot is kept at a time. Each [createSnapshot] call overwrites the previous file. All
  * file I/O runs on [Dispatchers.IO].
  */
 actual class BackupService {
   /** The snapshot filename. Fixed — only one backup is kept at a time. */
-  private val BACKUP_FILE_NAME = "internal_backup.json"
+  private val BACKUP_FILE_NAME = "pennywise_backup.json"
 
-  /**
-   * Lazy-resolved backup directory. Resolved once on first access. Path: `~/.pennywise/snapshot/`
-   */
-  private val backupDir by lazy { File(System.getProperty("user.home"), ".pennywise/snapshot") }
+  private val backupDir by lazy { 
+      val homeDir = System.getProperty("user.home")
+      var targetDir = File(homeDir, "Documents")
+      if (!targetDir.exists() && !targetDir.mkdirs()) {
+          targetDir = File(homeDir)
+      }
+      targetDir
+  }
 
   /**
    * JSON serializer configured with:

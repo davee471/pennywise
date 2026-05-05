@@ -4,15 +4,14 @@ import stud.brokers.pennywise.models.Transaction
 import stud.brokers.pennywise.util.Result
 
 /**
- * Platform-specific service for exporting transaction data to a CSV file.
+ * Platform-specific service for exporting transaction data to a PDF file.
  *
  * This is an `expect` declaration — each platform provides its own `actual` implementation:
  * - **Android**: writes to the app's external Downloads directory via
  * [android.os.Environment.DIRECTORY_DOWNLOADS].
  * - **JVM/Desktop**: writes to `~/Documents/` in the user's home directory.
  *
- * The CSV content is built by [stud.brokers.pennywise.util.buildCsv] in commonMain and is identical
- * across platforms. Only the file writing is platform-specific.
+ * The HTML content is built by [stud.brokers.pennywise.util.InvoiceGenerator] and is completely cross-platform.
  *
  * File I/O runs on [kotlinx.coroutines.Dispatchers.IO].
  */

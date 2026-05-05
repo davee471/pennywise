@@ -22,6 +22,8 @@ fun SettingsView(
     isDarkTheme: Boolean,
     currencySymbol: String,
     onExportPdfClick: () -> Unit,
+    onExportBackupClick: () -> Unit,
+    onImportBackupClick: () -> Unit,
     onTogglePinClick: (Boolean) -> Unit,
     onToggleNotificationsClick: (Boolean) -> Unit,
     onToggleThemeClick: (Boolean) -> Unit,
@@ -30,6 +32,7 @@ fun SettingsView(
 ) {
     var showResetDialog by remember { mutableStateOf(false) }
     var showCurrencyDialog by remember { mutableStateOf(false) }
+    var showImportDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -87,6 +90,26 @@ fun SettingsView(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("EXPORT INVOICE TO PDF")
             }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Button(
+                onClick = onExportBackupClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text("BACKUP DATA TO JSON")
+            }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Button(
+                onClick = { showImportDialog = true },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("RESTORE DATA FROM JSON")
+            }
         }
 
         SettingsCard(title = "Security") {
@@ -132,6 +155,26 @@ fun SettingsView(
             },
             dismissButton = {
                 TextButton(onClick = { showResetDialog = false }) { Text("Cancel") }
+            }
+        )
+    }
+
+    if (showImportDialog) {
+        AlertDialog(
+            onDismissRequest = { showImportDialog = false },
+            title = { Text("Restore from Backup?") },
+            text = { Text("This will overwrite all current data with the contents of 'pennywise_backup.json'. Ensure the file is in your Downloads/Documents folder. This action cannot be undone.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onImportBackupClick()
+                        showImportDialog = false
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                ) { Text("Confirm Restore") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showImportDialog = false }) { Text("Cancel") }
             }
         )
     }

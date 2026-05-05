@@ -1,6 +1,7 @@
 package stud.brokers.pennywise.services
 
 import android.content.Context
+import android.os.Environment
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,25 +13,23 @@ import stud.brokers.pennywise.util.Result.ErrorType
 /**
  * Android implementation of [BackupService].
  *
- * Snapshots are written to the app's private internal storage at
- * `filesDir/snapshots/internal_backup.json`. This path is only accessible to the app — no storage
- * permissions are required.
+ * Snapshots are written to the public Downloads directory at
+ * `Downloads/pennywise_backup.json`. This makes it easy for the user to import and export data manually.
  *
  * Only one snapshot is kept at a time. Each [createSnapshot] call overwrites the previous file. All
  * file I/O runs on [Dispatchers.IO].
  *
- * @param context Android [Context] used to resolve [Context.filesDir].
  */
 actual class BackupService(private val context: Context) {
 
   /** The snapshot filename. */
-  private val BACKUP_FILE_NAME = "internal_backup.json"
+  private val BACKUP_FILE_NAME = "pennywise_backup.json"
 
-  /**
-   * Lazy-resolved snapshot directory. Created on first access if it does not exist. Path:
-   * `<filesDir>/snapshots/`
-   */
-  private val snapshotDir by lazy { File(context.filesDir, "snapshots") }
+  private val snapshotDir by lazy { 
+      val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+      if (!dir.exists()) dir.mkdirs()
+      dir
+  }
 
   /**
    * JSON serializer configured with:

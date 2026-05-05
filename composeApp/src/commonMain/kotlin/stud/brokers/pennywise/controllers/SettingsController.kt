@@ -13,7 +13,8 @@ import androidx.compose.runtime.setValue
 class SettingsController(
     private val dbManager: DatabaseManager,
     private val budgetController: BudgetController,
-    private val exportService: ExportService
+    private val exportService: ExportService,
+    private val backupController: BackupController
 ) {
     var isPinEnabled: Boolean = false
         private set
@@ -83,6 +84,14 @@ class SettingsController(
 
     suspend fun exportToPdf(htmlContent: String): Result<Unit> {
         return exportService.exportToPdf(htmlContent)
+    }
+
+    suspend fun exportBackup(): Result<Unit> {
+        return backupController.backup()
+    }
+
+    suspend fun importBackup(): Result<Unit> {
+        return backupController.restore()
     }
 
     suspend fun performFullReset(): Boolean {

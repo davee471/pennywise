@@ -250,6 +250,27 @@ fun App(
                                 settingsController.exportToPdf(html) 
                             } 
                         },
+                        onExportBackupClick = {
+                            coroutineScope.launch { settingsController.exportBackup() }
+                        },
+                        onImportBackupClick = {
+                            coroutineScope.launch {
+                                val result = settingsController.importBackup()
+                                if (result is stud.brokers.pennywise.util.Result.Success) {
+                                    settingsController.loadSettings()
+                                    
+                                    // 1. Instantly update the UI's local states
+                                    currency = settingsController.currencySymbol
+                                    isPinEnabled = settingsController.isPinEnabled
+                                    isNotificationsEnabled = settingsController.isNotificationsEnabled
+                                    
+                                    // 2. Tell BudgetController to refresh its memory
+                                    budgetController.loadActiveCycle()
+                                    
+                                    currentRoute = "dashboard" // Kick back to Dashboard
+                                }
+                            }
+                        },
                         onTogglePinClick = { enabled ->
                             if (enabled) {
                                 showPinSetup = true
