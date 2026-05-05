@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
@@ -47,8 +48,13 @@ fun TransactionView(
     // State for the selected category.
     var selectedCategory by remember { mutableStateOf<Category?>(transactionToEdit?.category) }
     
+    // State to trigger category refresh after adding a new one
+    var categoryRefreshKey by remember { mutableStateOf(0) }
+    var showAddCategoryDialog by remember { mutableStateOf(false) }
+    var newCategoryName by remember { mutableStateOf("") }
+
     // Fetch available categories from the database.
-    val categories by produceState<List<Category>>(initialValue = emptyList()) {
+    val categories by produceState<List<Category>>(initialValue = emptyList(), categoryRefreshKey) {
         value = txController.getCategories().getOrNull() ?: emptyList()
     }
 
@@ -111,7 +117,16 @@ fun TransactionView(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Category Selection Section
-        Text("Select Category", style = MaterialTheme.typography.titleMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Select Category", style = MaterialTheme.typography.titleMedium)
+            IconButton(onClick = { showAddCategoryDialog = true }) {
+                Icon(Icons.Default.Add, contentDescription = "Add Category", tint = MaterialTheme.colorScheme.primary)
+            }
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -140,6 +155,37 @@ fun TransactionView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Add Custom Category Dialog
+        if (showAddCategoryDialog) {
+            AlertDialog(
+                onDismissRequest = { showAddCategoryDialog = false },
+                title = { Text("Add Custom Category") },
+                text = {
+                    OutlinedTextField(
+                        value = newCategoryName,
+                        onValueChange = { newCategoryName = it },
+                        label = { Text("Category Name") },
+                        singleLine = true
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        if (newCategoryName.isNotBlank()) {
+                            scope.launch {
+                                // Pass a generic default icon like "label" for custom categories
+                                txController.addCategory(newCategoryName.trim(), "label")
+                                categoryRefreshKey++ // Trigger categories reload
+                                showAddCategoryDialog = false
+                                newCategoryName = "" // Reset input
+                            }
+                        }
+                    }) { Text("Add") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showAddCategoryDialog = false }) { Text("Cancel") }
+                }
+            )
+        }
     }
 }
 
