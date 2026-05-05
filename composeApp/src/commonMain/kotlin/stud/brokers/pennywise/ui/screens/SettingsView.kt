@@ -19,10 +19,12 @@ import androidx.compose.ui.unit.dp
 fun SettingsView(
     isPinEnabled: Boolean,
     isNotificationsEnabled: Boolean,
+    isDarkTheme: Boolean,
     currencySymbol: String,
     onExportCsvClick: () -> Unit,
     onTogglePinClick: (Boolean) -> Unit,
     onToggleNotificationsClick: (Boolean) -> Unit,
+    onToggleThemeClick: (Boolean) -> Unit,
     onChangeCurrencyClick: (String) -> Unit,
     onResetCycleClick: () -> Unit
 ) {
@@ -39,6 +41,18 @@ fun SettingsView(
         Text("Settings", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
 
         SettingsCard(title = "Preferences") {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Dark Theme", style = MaterialTheme.typography.bodyLarge)
+                Switch(
+                    checked = isDarkTheme,
+                    onCheckedChange = onToggleThemeClick
+                )
+            }
+            HorizontalDivider()
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,

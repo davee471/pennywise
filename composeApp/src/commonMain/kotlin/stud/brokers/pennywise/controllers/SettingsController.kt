@@ -4,10 +4,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import stud.brokers.pennywise.db.DatabaseManager
-import stud.brokers.pennywise.models.Category
 import stud.brokers.pennywise.services.ExportService
 import stud.brokers.pennywise.util.Result
 import stud.brokers.pennywise.util.SettingsKeys
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 class SettingsController(
     private val dbManager: DatabaseManager,
     private val budgetController: BudgetController,
@@ -20,8 +22,14 @@ class SettingsController(
     var currencySymbol: String = "EGP"
         private set
 
+    var isLoaded by mutableStateOf(false)
+        private set
+
     init {
-        CoroutineScope(Dispatchers.Default).launch { loadSettings() }
+        CoroutineScope(Dispatchers.Default).launch {
+            loadSettings()
+            isLoaded = true
+        }
     }
 
     suspend fun loadSettings() {
