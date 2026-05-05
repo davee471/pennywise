@@ -1,6 +1,7 @@
 package stud.brokers.pennywise.services
 
 import java.awt.*
+import java.awt.TrayIcon.MessageType
 
 /**
  * JVM/Desktop implementation of [NotificationService].
