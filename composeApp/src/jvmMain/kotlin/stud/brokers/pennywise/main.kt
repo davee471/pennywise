@@ -10,12 +10,14 @@ import stud.brokers.pennywise.db.DatabaseManager
 import stud.brokers.pennywise.db.DriverFactory
 import stud.brokers.pennywise.services.ExportService
 import stud.brokers.pennywise.services.BackupService
+import stud.brokers.pennywise.services.NotificationService
 
 fun main() = application {
     // Build the controllers
     val driverFactory = DriverFactory()
     val exportService = ExportService()
     val backupService = BackupService()
+    val notificationService = NotificationService()
     val dbManager = DatabaseManager(driverFactory)
     val txController = TransactionController(dbManager)
     val budgetController = BudgetController(dbManager, txController = txController)
@@ -29,6 +31,7 @@ fun main() = application {
         // Pass it in!
         App(settingsController = settingsController,
             budgetController = budgetController,
-            txController = txController)
+            txController = txController,
+            notificationService = notificationService)
     }
 }

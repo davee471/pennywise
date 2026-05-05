@@ -18,7 +18,7 @@ class SettingsController(
 ) {
     var isPinEnabled: Boolean = false
         private set
-    var isNotificationsEnabled: Boolean = false
+    var isNotificationsEnabled: Boolean = true
         private set
     var currencySymbol: String = "EGP"
         private set
@@ -40,8 +40,8 @@ class SettingsController(
         }
 
         isNotificationsEnabled = when (val res = dbManager.fetchSetting(SettingsKeys.NOTIFICATION_ENABLED)) {
-            is Result.Success -> res.data == "true"
-            else -> false
+            is Result.Success -> res.data?.toBoolean() ?: true
+            else -> true
         }
 
         currencySymbol = when (val res = dbManager.fetchSetting(SettingsKeys.CURRENCY_SYMBOL)) {

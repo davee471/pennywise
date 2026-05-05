@@ -26,12 +26,14 @@ import stud.brokers.pennywise.ui.components.PinOverlay
 import stud.brokers.pennywise.ui.screens.*
 import stud.brokers.pennywise.ui.theme.AppTheme // <-- Custom Theme Import!
 import stud.brokers.pennywise.util.InvoiceGenerator
+import stud.brokers.pennywise.services.NotificationService
 
 @Composable
 fun App(
     settingsController: SettingsController,
     budgetController: BudgetController,
-    txController: TransactionController
+    txController: TransactionController,
+    notificationService: NotificationService
 ) {
     // Default to the system theme on launch
     val systemTheme = isSystemInDarkTheme()
@@ -51,6 +53,17 @@ fun App(
 
         // State for holding a transaction if the user clicks "Edit" in HistoryView
         var transactionToEdit by remember { mutableStateOf<Transaction?>(null) }
+
+        // Trigger Notifications when state changes from False to True
+        val isOver80Percent = budgetController.isLowBudget || budgetController.isExhausted
+        var previousOver80 by remember { mutableStateOf(isOver80Percent) }
+
+        LaunchedEffect(isOver80Percent) {
+            if (isOver80Percent && !previousOver80 && isNotificationsEnabled) {
+                notificationService.sendAlert("Warning: You have spent over 80% of your total allowance!")
+            }
+            previousOver80 = isOver80Percent
+        }
 
         // 2. Loading State Blocker (Prevents the NO_CYCLE SetupView flash glitch)
         if (!settingsController.isLoaded || !budgetController.isLoaded) {
@@ -161,6 +174,7 @@ fun App(
                             currencySymbol = currency,
                             isFinalDay = budgetController.isOnFinalDay,
                             isLowBudget = budgetController.isLowBudget,
+                            isOverDailyLimit = budgetController.isOverDailyLimit,
                             pieChartData = pieChartData,
                             onLogExpenseClick = { currentRoute = "transaction" },
                             onLogIncomeClick = { showIncomeDialog = true }

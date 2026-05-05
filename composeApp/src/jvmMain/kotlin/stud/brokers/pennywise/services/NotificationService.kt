@@ -14,12 +14,19 @@ import java.awt.TrayIcon.MessageType
  */
 actual class NotificationService {
   /**
-   * Lazy tray icon — created once on first [sendAlert] call. Uses a transparent 16x16 image since
-   * no custom icon asset exists for desktop. [isImageAutoSize] is enabled to let the OS scale it
-   * appropriately.
+   * Lazy tray icon — created once on first [sendAlert] call. 
+   * Draws a simple colored icon so it doesn't appear as a blank/invisible gap in the system tray.
    */
   private val trayIcon: TrayIcon by lazy {
     val image = java.awt.image.BufferedImage(16, 16, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+    val graphics = image.createGraphics()
+    graphics.color = java.awt.Color(0, 150, 136) // Teal background
+    graphics.fillOval(2, 2, 12, 12)
+    graphics.color = java.awt.Color.WHITE
+    graphics.font = java.awt.Font("SansSerif", java.awt.Font.BOLD, 10)
+    graphics.drawString("P", 4, 12)
+    graphics.dispose()
+
     TrayIcon(image, "PennyWise").apply { isImageAutoSize = true }
   }
 
@@ -34,12 +41,16 @@ actual class NotificationService {
   actual suspend fun sendAlert(message: String) {
     if (!SystemTray.isSupported()) return
 
-    val tray = SystemTray.getSystemTray()
-
-    if (tray.trayIcons.none { it == trayIcon }) {
-      tray.add(trayIcon)
+    try {
+      val tray = SystemTray.getSystemTray()
+  
+      if (tray.trayIcons.none { it == trayIcon }) {
+        tray.add(trayIcon)
+      }
+  
+      trayIcon.displayMessage("PennyWise Alert", message, MessageType.INFO)
+    } catch (e: Exception) {
+      // Silently fail if the OS rejects the tray icon (common on Wayland Linux distros)
     }
-
-    trayIcon.displayMessage("PennyWise Alert", message, MessageType.INFO)
   }
 }

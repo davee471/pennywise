@@ -47,7 +47,8 @@ class MainActivity : ComponentActivity() {
             App(
                 settingsController = settingsController,
                 budgetController = budgetController,
-                txController = txController
+                txController = txController,
+                notificationService = notificationService
             )
         }
     }

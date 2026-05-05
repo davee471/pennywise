@@ -3,7 +3,9 @@ package stud.brokers.pennywise.services
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationCompat
 import stud.brokers.pennywise.R
 
@@ -58,6 +60,12 @@ actual class NotificationService(private val context: Context) {
    * @param message The alert message to display (e.g. "80% of budget reached").
    */
   actual suspend fun sendAlert(message: String) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        return // Silently abort if permission denied to prevent security crashes
+      }
+    }
+
     val builder =
             NotificationCompat.Builder(context, channelId)
                     .setSmallIcon(android.R.drawable.ic_dialog_info)

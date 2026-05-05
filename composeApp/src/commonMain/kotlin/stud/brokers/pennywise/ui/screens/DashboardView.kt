@@ -5,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,10 +18,26 @@ fun DashboardView(
     currencySymbol: String,
     isFinalDay: Boolean,
     isLowBudget: Boolean,
+    isOverDailyLimit: Boolean,
     pieChartData: Map<String, Double>,
     onLogExpenseClick: () -> Unit,
     onLogIncomeClick: () -> Unit
 ) {
+    var showLimitWarning by remember(isOverDailyLimit) { mutableStateOf(isOverDailyLimit) }
+
+    if (showLimitWarning) {
+        AlertDialog(
+            onDismissRequest = { showLimitWarning = false },
+            title = { Text("Daily Limit Exceeded") },
+            text = { Text("You have spent over your daily limit! Be careful with your remaining expenses today.") },
+            confirmButton = {
+                TextButton(onClick = { showLimitWarning = false }) {
+                    Text("Got it")
+                }
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
