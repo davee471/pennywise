@@ -38,7 +38,6 @@ fun App(
     var isDarkTheme by remember { mutableStateOf(systemTheme) }
 
     // 1. WRAP THE ENTIRE APP IN YOUR CUSTOM THEME
-    AppTheme {
     AppTheme(darkTheme = isDarkTheme) {
         val coroutineScope = rememberCoroutineScope()
 
@@ -264,7 +263,6 @@ fun App(
                     )
 
                     "stats" -> StatsView(txController = txController, cycleId = activeCycleId)
-                    }
                 }
             }
         }
