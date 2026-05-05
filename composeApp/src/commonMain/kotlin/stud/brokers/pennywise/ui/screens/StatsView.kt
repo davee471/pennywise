@@ -15,7 +15,8 @@ import stud.brokers.pennywise.models.TransactionType
 @Composable
 fun StatsView(
     txController: TransactionController,
-    cycleId: Long
+    cycleId: Long,
+    currencySymbol: String
 ) {
     var totalSpent by remember { mutableStateOf(0.0) }
     var pieChartData by remember { mutableStateOf<Map<String, Double>>(emptyMap()) }
@@ -64,7 +65,7 @@ fun StatsView(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "$totalSpent EGP",
+                    text = "$totalSpent $currencySymbol",
                     style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.error // Red to indicate spent budget
                 )

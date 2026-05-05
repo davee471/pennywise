@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DashboardView(
     dailyLimit: Double,
+    currencySymbol: String,
     isFinalDay: Boolean,
     isLowBudget: Boolean,
     pieChartData: Map<String, Double>,
@@ -27,7 +28,12 @@ fun DashboardView(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DisplayLimit(amount = dailyLimit, isFinalDay = isFinalDay, isLowBudget = isLowBudget)
+        DisplayLimit(
+            amount = dailyLimit,
+            currencySymbol = currencySymbol,
+            isFinalDay = isFinalDay,
+            isLowBudget = isLowBudget
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -59,7 +65,12 @@ fun DashboardView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplayLimit(amount: Double, isFinalDay: Boolean, isLowBudget: Boolean) {
+fun DisplayLimit(
+    amount: Double,
+    currencySymbol: String,
+    isFinalDay: Boolean,
+    isLowBudget: Boolean
+) {
     Card(
         modifier = Modifier
             .size(220.dp)
@@ -78,7 +89,7 @@ fun DisplayLimit(amount: Double, isFinalDay: Boolean, isLowBudget: Boolean) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "$amount EGP",
+                text = "$amount $currencySymbol",
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                 // Display limit in orange if remaining budget is below 20%
                 color = if (isLowBudget) Color(0xFFFFA500) else MaterialTheme.colorScheme.onSurfaceVariant

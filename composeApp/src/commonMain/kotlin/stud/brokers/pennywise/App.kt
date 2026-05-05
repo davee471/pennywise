@@ -100,6 +100,7 @@ fun App(
         if (budgetController.cycleStatus == BudgetController.CycleStatus.NO_CYCLE) {
             SetupView(
                 budgetController = budgetController,
+                currencySymbol = currency,
                 onSetupComplete = {
                     // The activeCycle variable inside BudgetController will update automatically,
                     // triggering a recomposition that removes this SetupView!
@@ -156,6 +157,7 @@ fun App(
                         // Pass the REAL variables to the View
                         DashboardView(
                             dailyLimit = dailyLimit,
+                            currencySymbol = currency,
                             isFinalDay = budgetController.isOnFinalDay,
                             isLowBudget = budgetController.isLowBudget,
                             pieChartData = pieChartData,
@@ -174,7 +176,7 @@ fun App(
                                         onValueChange = {
                                             if (it.all { char -> char.isDigit() || char == '.' }) incomeInput = it
                                         },
-                                        label = { Text("Amount (EGP)") }
+                                        label = { Text("Amount ($currency)") }
                                     )
                                 },
                                 confirmButton = {
@@ -207,6 +209,7 @@ fun App(
                         txController = txController,
                         budgetController = budgetController,
                         cycleId = activeCycleId,
+                        currencySymbol = currency,
                         transactionToEdit = transactionToEdit,
                         onTransactionSaved = {
                             transactionToEdit = null
@@ -260,7 +263,11 @@ fun App(
                         }
                     )
 
-                    "stats" -> StatsView(txController = txController, cycleId = activeCycleId)
+                    "stats" -> StatsView(
+                        txController = txController,
+                        cycleId = activeCycleId,
+                        currencySymbol = currency
+                    )
                 }
             }
         }

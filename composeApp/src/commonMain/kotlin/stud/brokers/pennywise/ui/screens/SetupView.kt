@@ -14,7 +14,7 @@ import stud.brokers.pennywise.controllers.BudgetController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupView(budgetController: BudgetController, onSetupComplete: () -> Unit) {
+fun SetupView(budgetController: BudgetController, currencySymbol: String, onSetupComplete: () -> Unit) {
     val scope = rememberCoroutineScope()
     var totalBudget by remember { mutableStateOf("") }
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
@@ -65,7 +65,7 @@ fun SetupView(budgetController: BudgetController, onSetupComplete: () -> Unit) {
         OutlinedTextField(
             value = totalBudget,
             onValueChange = { if (it.all { char -> char.isDigit() || char == '.' }) totalBudget = it },
-            label = { Text("Total Budget (EGP)") },
+            label = { Text("Total Budget ($currencySymbol)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )

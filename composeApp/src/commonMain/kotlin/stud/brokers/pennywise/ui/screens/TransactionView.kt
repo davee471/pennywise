@@ -27,6 +27,7 @@ import stud.brokers.pennywise.controllers.BudgetController
  * 
  * @param txController The controller handling transaction logic and database interactions.
  * @param cycleId The ID of the current budget cycle this transaction belongs to.
+ * @param currencySymbol The user's preferred currency symbol to display in the UI.
  * @param transactionToEdit An optional existing transaction to pre-fill the form for editing.
  * @param onTransactionSaved Callback invoked after a transaction is successfully saved.
  * @param onCancel Callback invoked when the user cancels the action.
@@ -36,6 +37,7 @@ fun TransactionView(
     txController: TransactionController,
     budgetController: BudgetController,
     cycleId: Long,
+    currencySymbol: String,
     transactionToEdit: Transaction? = null,
     onTransactionSaved: () -> Unit,
     onCancel: () -> Unit
@@ -106,7 +108,7 @@ fun TransactionView(
                 if (it.all { char -> char.isDigit() || char == '.' }) amount = it 
             },
             placeholder = { Text("0.00") },
-            suffix = { Text("EGP") },
+            suffix = { Text(currencySymbol) },
             modifier = Modifier.fillMaxWidth(),
             textStyle = MaterialTheme.typography.headlineMedium.copy(
                 textAlign = TextAlign.Center, 
