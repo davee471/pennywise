@@ -30,8 +30,15 @@ class BudgetController(
     var spentToday by mutableStateOf(0.0)
         private set
 
+    var isLoaded by mutableStateOf(false)
+        private set
+
     init {
-        CoroutineScope(Dispatchers.Default).launch { loadActiveCycle(); refreshSpentToday() }
+        CoroutineScope(Dispatchers.Default).launch {
+            loadActiveCycle()
+            refreshSpentToday()
+            isLoaded = true
+        }
     }
 
     var dailyLimit by mutableStateOf(0.0)
