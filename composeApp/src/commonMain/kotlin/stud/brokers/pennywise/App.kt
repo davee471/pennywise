@@ -265,6 +265,7 @@ fun App(
 
                     "stats" -> StatsView(
                         txController = txController,
+                        budgetController = budgetController,
                         cycleId = activeCycleId,
                         currencySymbol = currency
                     )
