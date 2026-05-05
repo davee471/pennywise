@@ -20,6 +20,7 @@ import stud.brokers.pennywise.ui.components.NavBar
 import stud.brokers.pennywise.ui.components.PinMode
 import stud.brokers.pennywise.ui.components.PinOverlay
 import stud.brokers.pennywise.ui.screens.*
+import stud.brokers.pennywise.util.Result
 
 @Composable
 fun App(
@@ -120,7 +121,7 @@ fun App(
                         // Calculate real Pie Chart data from History
                         val res = txController.getHistory(activeCycleId)
                         val transactions =
-                            if (res is stud.brokers.pennywise.util.Result.Success<*>) {
+                            if (res is Result.Success<*>) {
                                 @Suppress("UNCHECKED_CAST")
                                 res.data as List<Transaction>
                             } else emptyList()
@@ -202,7 +203,8 @@ fun App(
                     onEditTransaction = { tx ->
                         transactionToEdit = tx
                         currentRoute = "transaction" // Open the form with this specific TX
-                    }
+                    },
+                    budgetController = budgetController
                 )
 
                 "settings" -> SettingsView(

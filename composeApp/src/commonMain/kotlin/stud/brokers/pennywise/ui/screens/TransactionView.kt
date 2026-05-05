@@ -19,6 +19,7 @@ import stud.brokers.pennywise.controllers.TransactionController
 import stud.brokers.pennywise.models.Category
 import stud.brokers.pennywise.models.Transaction
 import stud.brokers.pennywise.controllers.BudgetController
+import stud.brokers.pennywise.models.TransactionType
 
 /**
  * TransactionView is a Composable screen that allows users to log new expenses
@@ -63,7 +64,7 @@ fun TransactionView(
                 Icon(Icons.Default.Close, contentDescription = "Cancel", tint = MaterialTheme.colorScheme.error)
             }
             Text(
-                text = if (transactionToEdit == null) "New Expense" else "Edit Expense",
+                text = if (transactionToEdit == null) "New Transaction" else "Edit Transaction",
                 style = MaterialTheme.typography.titleLarge
             )
             IconButton(
@@ -74,9 +75,13 @@ fun TransactionView(
                         scope.launch {
                             // Determine whether to log a new expense or update an existing one
                             if (transactionToEdit == null) {
-                                txController.logExpense(valAmount, category, cycleId)
-                            } else {
+                                budgetController.logExpense(valAmount, category)
+                            }
+                            else {
                                 txController.editTransaction(transactionToEdit.id, valAmount, category)
+                                if(transactionToEdit.type == TransactionType.INCOME){
+                                    budgetController.editIncome(valAmount - transactionToEdit.amount)
+                                }
                             }
                             onTransactionSaved()
                         }

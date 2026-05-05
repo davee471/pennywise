@@ -40,6 +40,6 @@ actual class NotificationService {
       tray.add(trayIcon)
     }
 
-    trayIcon.displayMessage("PennyWise Alert", message, MessageType.INFO)
+    trayIcon.displayMessage("PennyWise Alert", message, TrayIcon.MessageType.INFO)
   }
 }

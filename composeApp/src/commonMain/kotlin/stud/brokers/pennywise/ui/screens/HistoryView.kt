@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
+import stud.brokers.pennywise.controllers.BudgetController
 import stud.brokers.pennywise.controllers.TransactionController
 import stud.brokers.pennywise.models.Category
 import stud.brokers.pennywise.models.Transaction
@@ -26,6 +27,7 @@ import stud.brokers.pennywise.models.TransactionType
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryView(
+    budgetController: BudgetController,
     txController: TransactionController,
     cycleId: Long,
     onEditTransaction: (Transaction) -> Unit = {}
@@ -56,6 +58,10 @@ fun HistoryView(
                             txController.deleteTransaction(tx.id)
                             // Refresh list
                             transactions = txController.getHistory(cycleId, selectedCategory).getOrNull() ?: emptyList()
+
+                            if(tx.type == TransactionType.INCOME){
+                                budgetController.editIncome(-(tx.amount))
+                            }
                         }
                     }
                     transactionToDelete = null
