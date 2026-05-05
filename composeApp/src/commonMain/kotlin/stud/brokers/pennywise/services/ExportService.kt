@@ -19,14 +19,11 @@ import stud.brokers.pennywise.util.Result
 expect class ExportService {
 
   /**
-   * Builds a CSV string from [transactions] and writes it to the platform export directory with a
-   * timestamped filename.
+   * Takes an HTML invoice string and converts/saves it as a PDF document.
    *
-   * CSV format: `date,type,category,amount` — one row per transaction.
-   *
-   * @param transactions The list of transactions to export.
+   * @param htmlContent The formatted HTML invoice string.
    * @return [Result.Success] with [Unit] on success, or [Result.Error] with
    * [Result.ErrorType.FILESYSTEM] if the file could not be written.
    */
-  suspend fun exportToCsv(transactions: List<Transaction>): Result<Unit>
+  suspend fun exportToPdf(htmlContent: String): Result<Unit>
 }

@@ -29,10 +29,8 @@ class MainActivity : ComponentActivity() {
         val driverFactory = DriverFactory(this)
         //testing notificaitonservice
         val notificationService = NotificationService(this)
-        val exportService = ExportService(
-            this,
-            noti = notificationService
-        )
+        val exportService = ExportService()
+        exportService.setContext(this)
         val dbManager = DatabaseManager(driverFactory)
         val txController = TransactionController(dbManager)
         val budgetController = BudgetController(dbManager,txController)

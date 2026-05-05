@@ -25,6 +25,7 @@ import stud.brokers.pennywise.ui.components.PinMode
 import stud.brokers.pennywise.ui.components.PinOverlay
 import stud.brokers.pennywise.ui.screens.*
 import stud.brokers.pennywise.ui.theme.AppTheme // <-- Custom Theme Import!
+import stud.brokers.pennywise.util.InvoiceGenerator
 
 @Composable
 fun App(
@@ -235,7 +236,20 @@ fun App(
                         isNotificationsEnabled = isNotificationsEnabled,
                         isDarkTheme = isDarkTheme,
                         currencySymbol = currency,
-                        onExportCsvClick = { coroutineScope.launch { settingsController.exportDataToCsv() } },
+                        onExportPdfClick = { 
+                            coroutineScope.launch { 
+                                // 1. Fetch transactions & allowance for the invoice
+                                val res = txController.getHistory(activeCycleId)
+                                val transactions = if (res is stud.brokers.pennywise.util.Result.Success<*>) {
+                                    @Suppress("UNCHECKED_CAST") res.data as List<Transaction>
+                                } else emptyList()
+                                val allowance = budgetController.activeCycle?.totalAllowance ?: 0.0
+                                
+                                // 2. Build HTML and trigger Export
+                                val html = InvoiceGenerator.buildHtml(transactions, allowance, currency)
+                                settingsController.exportToPdf(html) 
+                            } 
+                        },
                         onTogglePinClick = { enabled ->
                             if (enabled) {
                                 showPinSetup = true

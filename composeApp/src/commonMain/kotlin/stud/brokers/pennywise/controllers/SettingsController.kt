@@ -81,11 +81,8 @@ class SettingsController(
         return false
     }
 
-    suspend fun exportDataToCsv(): Result<Unit> {
-        return when (val txResult = dbManager.fetchTransactions()) {
-            is Result.Success -> exportService.exportToCsv(txResult.data)
-            is Result.Error -> Result.Error(txResult.message, txResult.type)
-        }
+    suspend fun exportToPdf(htmlContent: String): Result<Unit> {
+        return exportService.exportToPdf(htmlContent)
     }
 
     suspend fun performFullReset(): Boolean {

@@ -21,7 +21,7 @@ fun SettingsView(
     isNotificationsEnabled: Boolean,
     isDarkTheme: Boolean,
     currencySymbol: String,
-    onExportCsvClick: () -> Unit,
+    onExportPdfClick: () -> Unit,
     onTogglePinClick: (Boolean) -> Unit,
     onToggleNotificationsClick: (Boolean) -> Unit,
     onToggleThemeClick: (Boolean) -> Unit,
@@ -79,13 +79,13 @@ fun SettingsView(
 
         SettingsCard(title = "Data & Backup") {
             Button(
-                onClick = onExportCsvClick,
+                onClick = onExportPdfClick,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
                 Icon(Icons.Default.Share, contentDescription = "Export")
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("EXPORT TO CSV")
+                Text("EXPORT INVOICE TO PDF")
             }
         }
 

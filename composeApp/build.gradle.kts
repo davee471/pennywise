@@ -48,6 +48,7 @@ kotlin {
         dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
             implementation("app.cash.sqldelight:sqlite-driver:2.0.2")
         }
     }
