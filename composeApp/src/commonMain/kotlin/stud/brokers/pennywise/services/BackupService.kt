@@ -7,8 +7,8 @@ import stud.brokers.pennywise.util.Result
  * Platform-specific service for persisting and loading backup snapshots.
  *
  * This is an `expect` declaration — each platform provides its own `actual` implementation:
- * - **Android**: writes to the app's private internal storage (`filesDir/snapshots/`).
- * - **JVM/Desktop**: writes to `~/.pennywise/snapshot/` in the user's home directory.
+ * - **Android**: writes to the device's public Downloads directory.
+ * - **JVM/Desktop**: writes to `~/Documents/` in the user's home directory.
  *
  * Snapshots are serialized as pretty-printed JSON using `kotlinx.serialization`. Only one snapshot
  * is kept at a time — each [createSnapshot] call overwrites the previous file.

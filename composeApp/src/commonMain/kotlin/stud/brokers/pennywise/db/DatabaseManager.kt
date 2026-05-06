@@ -28,6 +28,10 @@ class DatabaseManager(driverFactory: DriverFactory) {
   private val queries = database.pennyWiseQueries
 
   init {
+    seedDefaultCategoriesIfNeeded()
+  }
+
+  private fun seedDefaultCategoriesIfNeeded() {
     // Auto-seed default categories if the database is completely empty
     if (queries.fetchCategories().executeAsList().isEmpty()) {
       queries.insertCategory(name = "Food", iconName = "restaurant")
@@ -315,6 +319,7 @@ class DatabaseManager(driverFactory: DriverFactory) {
     queries.deleteAllTransactions()
     queries.deleteAllCycles()
     queries.deleteAllCategories()
+    seedDefaultCategoriesIfNeeded()
     Success(Unit)
   }
 

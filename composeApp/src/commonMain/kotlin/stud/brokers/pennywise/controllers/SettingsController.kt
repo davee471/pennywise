@@ -13,11 +13,12 @@ import androidx.compose.runtime.setValue
 class SettingsController(
     private val dbManager: DatabaseManager,
     private val budgetController: BudgetController,
-    private val exportService: ExportService
+    private val exportService: ExportService,
+    private val backupController: BackupController
 ) {
     var isPinEnabled: Boolean = false
         private set
-    var isNotificationsEnabled: Boolean = false
+    var isNotificationsEnabled: Boolean = true
         private set
     var currencySymbol: String = "EGP"
         private set
@@ -39,8 +40,8 @@ class SettingsController(
         }
 
         isNotificationsEnabled = when (val res = dbManager.fetchSetting(SettingsKeys.NOTIFICATION_ENABLED)) {
-            is Result.Success -> res.data == "true"
-            else -> false
+            is Result.Success -> res.data?.toBoolean() ?: true
+            else -> true
         }
 
         currencySymbol = when (val res = dbManager.fetchSetting(SettingsKeys.CURRENCY_SYMBOL)) {
@@ -81,11 +82,16 @@ class SettingsController(
         return false
     }
 
-    suspend fun exportDataToCsv(): Result<Unit> {
-        return when (val txResult = dbManager.fetchTransactions()) {
-            is Result.Success -> exportService.exportToCsv(txResult.data)
-            is Result.Error -> Result.Error(txResult.message, txResult.type)
-        }
+    suspend fun exportToPdf(htmlContent: String): Result<Unit> {
+        return exportService.exportToPdf(htmlContent)
+    }
+
+    suspend fun exportBackup(): Result<Unit> {
+        return backupController.backup()
+    }
+
+    suspend fun importBackup(): Result<Unit> {
+        return backupController.restore()
     }
 
     suspend fun performFullReset(): Boolean {

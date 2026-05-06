@@ -47,7 +47,13 @@ class BudgetController(
     var isLowBudget by mutableStateOf(false)
         private set
 
-    private suspend fun loadActiveCycle() {
+    var isExhausted by mutableStateOf(false)
+        private set
+
+    var isOverDailyLimit by mutableStateOf(false)
+        private set
+
+    suspend fun loadActiveCycle() {
         activeCycle = when (val result = dbManager.fetchCycle()) {
             is Result.Success -> result.data
             is Result.Error -> null
@@ -88,6 +94,8 @@ class BudgetController(
             spentToday = 0.0
             dailyLimit = 0.0
             isLowBudget = false
+            isExhausted = false
+            isOverDailyLimit = false
             return
         }
 
@@ -103,12 +111,14 @@ class BudgetController(
         spentToday = expenses.filter { it.date == today }.sumOf { it.amount } // Actually updates your variable!
 
         val totalRemaining = currentCycle.totalAllowance - expenses.sumOf { it.amount }
-        isLowBudget = totalRemaining <= (0.2 * currentCycle.totalAllowance)
+        isExhausted = totalRemaining <= 0.0
+        isLowBudget = totalRemaining <= (0.2 * currentCycle.totalAllowance) && !isExhausted
 
         val remainingBeforeToday = currentCycle.totalAllowance - spentBeforeTodayAmount
         val baseLimit = currentCycle.calculateLimit(remainingBeforeToday) // e.g. 3000 / 30 = 100
         val rawDayLimit = baseLimit - spentToday // e.g. 100 - 50 = 50
 
+        isOverDailyLimit = rawDayLimit < 0.0
         dailyLimit = (truncate(rawDayLimit * 100) / 100).coerceAtLeast(0.0)
     }
 

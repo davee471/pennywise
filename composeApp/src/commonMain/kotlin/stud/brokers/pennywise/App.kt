@@ -24,14 +24,16 @@ import stud.brokers.pennywise.ui.components.NavBar
 import stud.brokers.pennywise.ui.components.PinMode
 import stud.brokers.pennywise.ui.components.PinOverlay
 import stud.brokers.pennywise.ui.screens.*
-import stud.brokers.pennywise.util.Result
 import stud.brokers.pennywise.ui.theme.AppTheme // <-- Custom Theme Import!
+import stud.brokers.pennywise.util.InvoiceGenerator
+import stud.brokers.pennywise.services.NotificationService
 
 @Composable
 fun App(
     settingsController: SettingsController,
     budgetController: BudgetController,
-    txController: TransactionController
+    txController: TransactionController,
+    notificationService: NotificationService
 ) {
     // Default to the system theme on launch
     val systemTheme = isSystemInDarkTheme()
@@ -51,6 +53,17 @@ fun App(
 
         // State for holding a transaction if the user clicks "Edit" in HistoryView
         var transactionToEdit by remember { mutableStateOf<Transaction?>(null) }
+
+        // Trigger Notifications when state changes from False to True
+        val isOver80Percent = budgetController.isLowBudget || budgetController.isExhausted
+        var previousOver80 by remember { mutableStateOf(isOver80Percent) }
+
+        LaunchedEffect(isOver80Percent) {
+            if (isOver80Percent && !previousOver80 && isNotificationsEnabled) {
+                notificationService.sendAlert("Warning: You have spent over 80% of your total allowance!")
+            }
+            previousOver80 = isOver80Percent
+        }
 
         // 2. Loading State Blocker (Prevents the NO_CYCLE SetupView flash glitch)
         if (!settingsController.isLoaded || !budgetController.isLoaded) {
@@ -101,6 +114,7 @@ fun App(
         if (budgetController.cycleStatus == BudgetController.CycleStatus.NO_CYCLE) {
             SetupView(
                 budgetController = budgetController,
+                currencySymbol = currency,
                 onSetupComplete = {
                     // The activeCycle variable inside BudgetController will update automatically,
                     // triggering a recomposition that removes this SetupView!
@@ -157,8 +171,10 @@ fun App(
                         // Pass the REAL variables to the View
                         DashboardView(
                             dailyLimit = dailyLimit,
+                            currencySymbol = currency,
                             isFinalDay = budgetController.isOnFinalDay,
                             isLowBudget = budgetController.isLowBudget,
+                            isOverDailyLimit = budgetController.isOverDailyLimit,
                             pieChartData = pieChartData,
                             onLogExpenseClick = { currentRoute = "transaction" },
                             onLogIncomeClick = { showIncomeDialog = true }
@@ -175,7 +191,7 @@ fun App(
                                         onValueChange = {
                                             if (it.all { char -> char.isDigit() || char == '.' }) incomeInput = it
                                         },
-                                        label = { Text("Amount (EGP)") }
+                                        label = { Text("Amount ($currency)") }
                                     )
                                 },
                                 confirmButton = {
@@ -208,6 +224,7 @@ fun App(
                         txController = txController,
                         budgetController = budgetController,
                         cycleId = activeCycleId,
+                        currencySymbol = currency,
                         transactionToEdit = transactionToEdit,
                         onTransactionSaved = {
                             transactionToEdit = null
@@ -225,8 +242,7 @@ fun App(
                         onEditTransaction = { tx ->
                             transactionToEdit = tx
                             currentRoute = "transaction" // Open the form with this specific TX
-                        },
-                    budgetController = budgetController
+                        }
                     )
 
                     "settings" -> SettingsView(
@@ -234,7 +250,41 @@ fun App(
                         isNotificationsEnabled = isNotificationsEnabled,
                         isDarkTheme = isDarkTheme,
                         currencySymbol = currency,
-                        onExportCsvClick = { coroutineScope.launch { settingsController.exportDataToCsv() } },
+                        onExportPdfClick = { 
+                            coroutineScope.launch { 
+                                // 1. Fetch transactions & allowance for the invoice
+                                val res = txController.getHistory(activeCycleId)
+                                val transactions = if (res is stud.brokers.pennywise.util.Result.Success<*>) {
+                                    @Suppress("UNCHECKED_CAST") res.data as List<Transaction>
+                                } else emptyList()
+                                val allowance = budgetController.activeCycle?.totalAllowance ?: 0.0
+                                
+                                // 2. Build HTML and trigger Export
+                                val html = InvoiceGenerator.buildHtml(transactions, allowance, currency)
+                                settingsController.exportToPdf(html) 
+                            } 
+                        },
+                        onExportBackupClick = {
+                            coroutineScope.launch { settingsController.exportBackup() }
+                        },
+                        onImportBackupClick = {
+                            coroutineScope.launch {
+                                val result = settingsController.importBackup()
+                                if (result is stud.brokers.pennywise.util.Result.Success) {
+                                    settingsController.loadSettings()
+                                    
+                                    // 1. Instantly update the UI's local states
+                                    currency = settingsController.currencySymbol
+                                    isPinEnabled = settingsController.isPinEnabled
+                                    isNotificationsEnabled = settingsController.isNotificationsEnabled
+                                    
+                                    // 2. Tell BudgetController to refresh its memory
+                                    budgetController.loadActiveCycle()
+                                    
+                                    currentRoute = "dashboard" // Kick back to Dashboard
+                                }
+                            }
+                        },
                         onTogglePinClick = { enabled ->
                             if (enabled) {
                                 showPinSetup = true
@@ -262,7 +312,12 @@ fun App(
                         }
                     )
 
-                    "stats" -> StatsView(txController = txController, cycleId = activeCycleId)
+                    "stats" -> StatsView(
+                        txController = txController,
+                        budgetController = budgetController,
+                        cycleId = activeCycleId,
+                        currencySymbol = currency
+                    )
                 }
             }
         }

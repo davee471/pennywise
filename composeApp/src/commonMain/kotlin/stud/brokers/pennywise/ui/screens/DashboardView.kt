@@ -5,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,19 +15,41 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DashboardView(
     dailyLimit: Double,
+    currencySymbol: String,
     isFinalDay: Boolean,
     isLowBudget: Boolean,
+    isOverDailyLimit: Boolean,
     pieChartData: Map<String, Double>,
     onLogExpenseClick: () -> Unit,
     onLogIncomeClick: () -> Unit
 ) {
+    var showLimitWarning by remember(isOverDailyLimit) { mutableStateOf(isOverDailyLimit) }
+
+    if (showLimitWarning) {
+        AlertDialog(
+            onDismissRequest = { showLimitWarning = false },
+            title = { Text("Daily Limit Exceeded") },
+            text = { Text("You have spent over your daily limit! Be careful with your remaining expenses today.") },
+            confirmButton = {
+                TextButton(onClick = { showLimitWarning = false }) {
+                    Text("Got it")
+                }
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DisplayLimit(amount = dailyLimit, isFinalDay = isFinalDay, isLowBudget = isLowBudget)
+        DisplayLimit(
+            amount = dailyLimit,
+            currencySymbol = currencySymbol,
+            isFinalDay = isFinalDay,
+            isLowBudget = isLowBudget
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -59,7 +81,12 @@ fun DashboardView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplayLimit(amount: Double, isFinalDay: Boolean, isLowBudget: Boolean) {
+fun DisplayLimit(
+    amount: Double,
+    currencySymbol: String,
+    isFinalDay: Boolean,
+    isLowBudget: Boolean
+) {
     Card(
         modifier = Modifier
             .size(220.dp)
@@ -78,7 +105,7 @@ fun DisplayLimit(amount: Double, isFinalDay: Boolean, isLowBudget: Boolean) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "$amount EGP",
+                text = "$amount $currencySymbol",
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                 // Display limit in orange if remaining budget is below 20%
                 color = if (isLowBudget) Color(0xFFFFA500) else MaterialTheme.colorScheme.onSurfaceVariant
