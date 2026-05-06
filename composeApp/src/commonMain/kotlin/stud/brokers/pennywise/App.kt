@@ -27,6 +27,7 @@ import stud.brokers.pennywise.ui.screens.*
 import stud.brokers.pennywise.ui.theme.AppTheme // <-- Custom Theme Import!
 import stud.brokers.pennywise.util.InvoiceGenerator
 import stud.brokers.pennywise.services.NotificationService
+import stud.brokers.pennywise.util.Result
 
 @Composable
 fun App(
@@ -157,7 +158,7 @@ fun App(
                             // Calculate real Pie Chart data from History
                             val res = txController.getHistory(activeCycleId)
                             val transactions =
-                                if (res is stud.brokers.pennywise.util.Result.Success<*>) {
+                                if (res is Result.Success<*>) {
                                     @Suppress("UNCHECKED_CAST")
                                     res.data as List<Transaction>
                                 } else emptyList()
@@ -242,7 +243,8 @@ fun App(
                         onEditTransaction = { tx ->
                             transactionToEdit = tx
                             currentRoute = "transaction" // Open the form with this specific TX
-                        }
+                        },
+                        budgetController = budgetController
                     )
 
                     "settings" -> SettingsView(
@@ -254,7 +256,7 @@ fun App(
                             coroutineScope.launch { 
                                 // 1. Fetch transactions & allowance for the invoice
                                 val res = txController.getHistory(activeCycleId)
-                                val transactions = if (res is stud.brokers.pennywise.util.Result.Success<*>) {
+                                val transactions = if (res is Result.Success<*>) {
                                     @Suppress("UNCHECKED_CAST") res.data as List<Transaction>
                                 } else emptyList()
                                 val allowance = budgetController.activeCycle?.totalAllowance ?: 0.0
@@ -270,7 +272,7 @@ fun App(
                         onImportBackupClick = {
                             coroutineScope.launch {
                                 val result = settingsController.importBackup()
-                                if (result is stud.brokers.pennywise.util.Result.Success) {
+                                if (result is Result.Success) {
                                     settingsController.loadSettings()
                                     
                                     // 1. Instantly update the UI's local states
