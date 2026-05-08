@@ -26,7 +26,10 @@ import stud.brokers.pennywise.R
  */
 actual class NotificationService(private val context: Context) {
 
+  /** The ID of the notification channel used for pennywise alerts. */
   private val channelId = "pennywise_alerts"
+  
+  /** The system [NotificationManager] service. */
   private val notificationManager =
           context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

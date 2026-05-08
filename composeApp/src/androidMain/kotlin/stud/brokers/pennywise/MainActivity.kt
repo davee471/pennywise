@@ -16,7 +16,20 @@ import stud.brokers.pennywise.services.NotificationService
 import android.os.Build
 import android.Manifest
 
+/**
+ * The main entry point activity for the Android application.
+ *
+ * It is responsible for setting up controllers, services, and the Compose UI content.
+ */
 class MainActivity : ComponentActivity() {
+    /**
+     * Called when the activity is starting.
+     *
+     * Initializes controllers and services, requests permissions, and sets the Compose UI content.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down
+     * then this Bundle contains the data it most recently supplied in [onSaveInstanceState].
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)

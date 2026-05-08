@@ -15,6 +15,11 @@ import stud.brokers.pennywise.PennyWiseDatabase
  * @param context Android [Context] required by [AndroidSqliteDriver].
  */
 actual class DriverFactory(private val context: Context) {
+  /**
+   * Creates and initializes the [AndroidSqliteDriver].
+   *
+   * @return A configured [SqlDriver] ready for database operations.
+   */
   actual fun createDriver(): SqlDriver {
     return AndroidSqliteDriver(
             schema = PennyWiseDatabase.Schema,

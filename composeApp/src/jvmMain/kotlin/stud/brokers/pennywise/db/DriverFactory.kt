@@ -14,6 +14,14 @@ import stud.brokers.pennywise.PennyWiseDatabase
  * creates the schema on a brand-new database to avoid wiping existing data.
  */
 actual class DriverFactory {
+  /**
+   * Creates and initializes the [JdbcSqliteDriver].
+   *
+   * Checks if the `pennywise.db` file exists. If it does not, a new database is created
+   * along with its schema. Otherwise, it simply connects to the existing database.
+   *
+   * @return A configured [SqlDriver] ready for database operations.
+   */
   actual fun createDriver(): SqlDriver {
     val dbFile = File("pennywise.db")
     // Check if the file exists BEFORE the driver connects and creates an empty one
