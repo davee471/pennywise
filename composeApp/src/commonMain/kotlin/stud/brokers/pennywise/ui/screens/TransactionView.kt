@@ -23,12 +23,13 @@ import stud.brokers.pennywise.controllers.BudgetController
 import stud.brokers.pennywise.models.TransactionType
 
 /**
- * TransactionView is a Composable screen that allows users to log new expenses
- * or edit existing ones. It includes fields for amount and category selection.
- * 
- * @param txController The controller handling transaction logic and database interactions.
- * @param cycleId The ID of the current budget cycle this transaction belongs to.
- * @param currencySymbol The user's preferred currency symbol to display in the UI.
+ * A screen for logging new transactions or editing existing ones.
+ * Provides inputs for amount and category selection, and allows adding custom categories.
+ *
+ * @param txController The controller for transaction-related operations.
+ * @param budgetController The controller for budget-related operations.
+ * @param cycleId The ID of the current budget cycle.
+ * @param currencySymbol The user's preferred currency symbol.
  * @param transactionToEdit An optional existing transaction to pre-fill the form for editing.
  * @param onTransactionSaved Callback invoked after a transaction is successfully saved.
  * @param onCancel Callback invoked when the user cancels the action.
@@ -123,7 +124,7 @@ fun TransactionView(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Category Selection Section
+        // Category Selection Section with "Add Category" action
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -162,7 +163,7 @@ fun TransactionView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Add Custom Category Dialog
+        // Dialog for adding a custom category
         if (showAddCategoryDialog) {
             AlertDialog(
                 onDismissRequest = { showAddCategoryDialog = false },
@@ -179,7 +180,7 @@ fun TransactionView(
                     Button(onClick = {
                         if (newCategoryName.isNotBlank()) {
                             scope.launch {
-                                // Pass a generic default icon like "label" for custom categories
+                                // Pass a generic default icon for custom categories
                                 txController.addCategory(newCategoryName.trim(), "label")
                                 categoryRefreshKey++ // Trigger categories reload
                                 showAddCategoryDialog = false
@@ -196,10 +197,9 @@ fun TransactionView(
     }
 }
 
-
-
-
-// Private helper to safely extract Result data without touching core files
+/**
+ * Extension function to safely extract data from a [stud.brokers.pennywise.util.Result] object.
+ */
 private fun <T> stud.brokers.pennywise.util.Result<T>.getOrNull(): T? {
     return when (this) {
         is stud.brokers.pennywise.util.Result.Success<*> -> {

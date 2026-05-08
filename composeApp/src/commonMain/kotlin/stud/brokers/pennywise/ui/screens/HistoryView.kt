@@ -24,6 +24,15 @@ import stud.brokers.pennywise.models.Category
 import stud.brokers.pennywise.models.Transaction
 import stud.brokers.pennywise.models.TransactionType
 
+/**
+ * A screen displaying the history of transactions for a specific budget cycle.
+ * Allows filtering by category and perform actions like editing or deleting transactions.
+ *
+ * @param budgetController The controller for budget-related operations.
+ * @param txController The controller for transaction-related operations.
+ * @param cycleId The ID of the budget cycle to show history for.
+ * @param onEditTransaction Callback invoked when the user selects a transaction to edit.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryView(
@@ -45,7 +54,7 @@ fun HistoryView(
 
     var transactionToDelete by remember { mutableStateOf<Transaction?>(null) }
 
-    // Delete Confirmation Dialog (US #8)
+    // Delete Confirmation Dialog
     if (transactionToDelete != null) {
         AlertDialog(
             onDismissRequest = { transactionToDelete = null },
@@ -80,7 +89,7 @@ fun HistoryView(
             modifier = Modifier.padding(16.dp)
         )
 
-        // Category chips
+        // Category chips for filtering
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -121,7 +130,6 @@ fun HistoryView(
                             today -> "Today"
                             yesterday -> "Yesterday"
                             else -> {
-                                // Simple format: 12 Oct 2023
                                 val month = date.month.name.lowercase().replaceFirstChar { it.uppercase() }.take(3)
                                 "${date.dayOfMonth} $month ${date.year}"
                             }
@@ -146,6 +154,13 @@ fun HistoryView(
     }
 }
 
+/**
+ * An individual transaction item in the history list.
+ *
+ * @param tx The transaction to display.
+ * @param onEdit Callback invoked when the user selects the "Edit" action from the menu.
+ * @param onDelete Callback invoked when the user selects the "Delete" action from the menu.
+ */
 @Composable
 fun TransactionItem(
     tx: Transaction,
@@ -164,7 +179,7 @@ fun TransactionItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Category Amount display
+                // Type-specific color and prefix (+ for income, - for expense)
                 Box(
                     modifier = Modifier
                         .size(48.dp)
@@ -183,7 +198,7 @@ fun TransactionItem(
                 Text(text = tx.category.name, style = MaterialTheme.typography.bodyLarge)
             }
             
-            // Menu for Edit/Delete on click
+            // Dropdown menu for Edit and Delete actions
             DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                 DropdownMenuItem(
                     text = { Text("Edit") },
@@ -207,10 +222,9 @@ fun TransactionItem(
     }
 }
 
-
-
-
-// Private helper to safely extract Result data without touching core files
+/**
+ * Extension function to safely extract data from a [stud.brokers.pennywise.util.Result] object.
+ */
 private fun <T> stud.brokers.pennywise.util.Result<T>.getOrNull(): T? {
     return when (this) {
         is stud.brokers.pennywise.util.Result.Success<*> -> {

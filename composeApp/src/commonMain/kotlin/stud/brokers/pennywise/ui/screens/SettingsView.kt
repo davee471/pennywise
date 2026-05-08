@@ -14,6 +14,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+/**
+ * A screen for managing application settings, including preferences, data backup, and security.
+ *
+ * @param isPinEnabled Whether the PIN lock is currently enabled.
+ * @param isNotificationsEnabled Whether daily notifications are enabled.
+ * @param isDarkTheme Whether the dark theme is currently selected.
+ * @param currencySymbol The current currency symbol used in the app.
+ * @param onExportPdfClick Callback for exporting transactions to a PDF invoice.
+ * @param onExportBackupClick Callback for exporting all app data to a JSON backup.
+ * @param onImportBackupClick Callback for restoring app data from a JSON backup.
+ * @param onTogglePinClick Callback invoked when the user toggles the PIN lock.
+ * @param onToggleNotificationsClick Callback invoked when the user toggles daily notifications.
+ * @param onToggleThemeClick Callback invoked when the user toggles between dark and light themes.
+ * @param onChangeCurrencyClick Callback invoked when the user updates the currency symbol.
+ * @param onResetCycleClick Callback invoked when the user requests a full data reset.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsView(
@@ -43,6 +59,7 @@ fun SettingsView(
     ) {
         Text("Settings", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
 
+        // Preferences section: Theme, Currency, and Notifications
         SettingsCard(title = "Preferences") {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -80,6 +97,7 @@ fun SettingsView(
             }
         }
 
+        // Data management section: Export PDF and JSON Backup/Restore
         SettingsCard(title = "Data & Backup") {
             Button(
                 onClick = onExportPdfClick,
@@ -112,6 +130,7 @@ fun SettingsView(
             }
         }
 
+        // Security section: PIN Lock
         SettingsCard(title = "Security") {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -126,6 +145,7 @@ fun SettingsView(
             }
         }
 
+        // High-risk section: Full Reset
         SettingsCard(title = "Full Reset", borderColor = MaterialTheme.colorScheme.error) {
             Button(
                 onClick = { showResetDialog = true },
@@ -139,6 +159,7 @@ fun SettingsView(
         }
     }
 
+    // Dialogs for destructive actions or input
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
@@ -205,6 +226,9 @@ fun SettingsView(
     }
 }
 
+/**
+ * A styled card used to group related settings together.
+ */
 @Composable
 fun SettingsCard(
     title: String,

@@ -12,6 +12,14 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import stud.brokers.pennywise.controllers.BudgetController
 
+/**
+ * A screen for initializing a new budget cycle.
+ * Prompts the user to enter a total budget and select the start and end dates.
+ *
+ * @param budgetController The controller for budget-related operations.
+ * @param currencySymbol The current currency symbol used in the app.
+ * @param onSetupComplete Callback invoked when the budget cycle has been successfully initialized.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupView(budgetController: BudgetController, currencySymbol: String, onSetupComplete: () -> Unit) {
@@ -25,7 +33,7 @@ fun SetupView(budgetController: BudgetController, currencySymbol: String, onSetu
     var pickingStartDate by remember { mutableStateOf(false) }
     var pickingEndDate by remember { mutableStateOf(false) }
 
-    // Dialog for picking dates
+    // Dialog for picking dates using Material 3 DatePicker
     if (pickingStartDate || pickingEndDate) {
         val initialDate = if (pickingStartDate) startDate else endDate
         val datePickerState = rememberDatePickerState(
@@ -62,6 +70,7 @@ fun SetupView(budgetController: BudgetController, currencySymbol: String, onSetu
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Total budget amount input field
         OutlinedTextField(
             value = totalBudget,
             onValueChange = { if (it.all { char -> char.isDigit() || char == '.' }) totalBudget = it },
@@ -72,6 +81,7 @@ fun SetupView(budgetController: BudgetController, currencySymbol: String, onSetu
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Start and End date selection buttons
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(
                 onClick = { pickingStartDate = true },
@@ -95,7 +105,7 @@ fun SetupView(budgetController: BudgetController, currencySymbol: String, onSetu
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Validation  for dates
+        // Validation for the entered amount and selected dates
         val amount = totalBudget.toDoubleOrNull() ?: 0.0
         val isValid = amount > 0 && endDate > startDate
 
@@ -114,6 +124,7 @@ fun SetupView(budgetController: BudgetController, currencySymbol: String, onSetu
             Text("Continue", style = MaterialTheme.typography.titleMedium)
         }
         
+        // Inline validation error message
         if (!isValid && totalBudget.isNotEmpty()) {
             Text(
                 text = if (amount <= 0) "Amount must be greater than 0" else "End date must be after start date",

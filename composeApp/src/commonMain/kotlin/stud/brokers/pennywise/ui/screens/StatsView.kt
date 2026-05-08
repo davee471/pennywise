@@ -14,6 +14,15 @@ import stud.brokers.pennywise.controllers.BudgetController
 import stud.brokers.pennywise.models.Transaction
 import stud.brokers.pennywise.models.TransactionType
 
+/**
+ * A screen providing a statistical overview of the current budget cycle.
+ * Displays available allowance, total spent, and categorical spending distribution.
+ *
+ * @param txController The controller for transaction-related operations.
+ * @param budgetController The controller for budget-related operations.
+ * @param cycleId The ID of the budget cycle to display statistics for.
+ * @param currencySymbol The currency symbol used for displaying amounts.
+ */
 @Composable
 fun StatsView(
     txController: TransactionController,
@@ -25,7 +34,7 @@ fun StatsView(
     var totalAllowance by remember { mutableStateOf(0.0) }
     var pieChartData by remember { mutableStateOf<Map<String, Double>>(emptyMap()) }
 
-    // Fetch and calculate stats whenever the view opens
+    // Fetch and calculate stats whenever the cycle ID or active cycle state changes
     LaunchedEffect(cycleId, budgetController.activeCycle) {
         totalAllowance = budgetController.activeCycle?.totalAllowance ?: 0.0
         
@@ -37,10 +46,10 @@ fun StatsView(
 
         val expenses = transactions.filter { it.type == TransactionType.EXPENSE }
 
-        // 1. Calculate Total Spent
+        // 1. Calculate Total Spent from all expenses in the cycle
         totalSpent = expenses.sumOf { it.amount }
 
-        // 2. Group by category for the Pie Chart
+        // 2. Group expenses by category for pie chart visualization
         pieChartData = expenses.groupBy { it.category.name }
             .mapValues { entry -> entry.value.sumOf { it.amount } }
     }
@@ -52,6 +61,7 @@ fun StatsView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // Top section: Dual-circle overview of Allowance and Spending
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -61,25 +71,33 @@ fun StatsView(
                 title = "Allowance",
                 amount = totalAllowance - totalSpent,
                 currencySymbol = currencySymbol,
-                color = MaterialTheme.colorScheme.primary, // Primary/Green to indicate available budget
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(150.dp)
             )
             StatCircle(
                 title = "Total Spent",
                 amount = totalSpent,
                 currencySymbol = currencySymbol,
-                color = MaterialTheme.colorScheme.error, // Red to indicate spent budget
+                color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(150.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Reusing the exact same chart component from DashboardView.kt!
+        // Categorical breakdown pie chart
         RenderPieChart(data = pieChartData)
     }
 }
 
+/**
+ * A circular indicator displaying a specific budget metric.
+ *
+ * @param title The label for the metric (e.g., "Allowance").
+ * @param amount The numerical value to display.
+ * @param currencySymbol The currency symbol to append to the amount.
+ * @param color The text color for the amount.
+ */
 @Composable
 fun StatCircle(
     title: String,
@@ -103,6 +121,7 @@ fun StatCircle(
             
             Spacer(modifier = Modifier.height(8.dp))
             
+            // Displays the formatted amount with the currency symbol
             Text(
                 text = "$amount $currencySymbol",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
