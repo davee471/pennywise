@@ -25,6 +25,11 @@ actual class BackupService(private val context: Context) {
   /** The snapshot filename. */
   private val BACKUP_FILE_NAME = "pennywise_backup.json"
 
+  /**
+   * Lazily resolves the directory where backups are stored.
+   *
+   * Defaults to the public Downloads directory on Android.
+   */
   private val snapshotDir by lazy { 
       val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
       if (!dir.exists()) dir.mkdirs()

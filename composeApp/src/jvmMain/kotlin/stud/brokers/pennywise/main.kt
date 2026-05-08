@@ -12,6 +12,12 @@ import stud.brokers.pennywise.services.ExportService
 import stud.brokers.pennywise.services.BackupService
 import stud.brokers.pennywise.services.NotificationService
 
+/**
+ * Application entry point for the Desktop/JVM platform.
+ *
+ * Sets up the application's dependencies including database, services, and controllers.
+ * It also defines the main window and launches the Compose UI [App].
+ */
 fun main() = application {
     // Build the controllers
     val driverFactory = DriverFactory()

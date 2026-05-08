@@ -20,6 +20,12 @@ actual class BackupService {
   /** The snapshot filename. Fixed — only one backup is kept at a time. */
   private val BACKUP_FILE_NAME = "pennywise_backup.json"
 
+  /**
+   * Lazily resolves the directory where backups are stored.
+   *
+   * Defaults to the `Documents` directory in the user's home path.
+   * If `Documents` cannot be created or accessed, it falls back to the user's home directory.
+   */
   private val backupDir by lazy { 
       val homeDir = System.getProperty("user.home")
       var targetDir = File(homeDir, "Documents")

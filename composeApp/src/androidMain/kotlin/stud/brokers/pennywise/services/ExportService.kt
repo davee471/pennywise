@@ -17,12 +17,24 @@ import stud.brokers.pennywise.util.Result
  */
 actual class ExportService {
 
+    /** The Android context required for system services. */
     private var context: Context? = null
 
+    /**
+     * Sets the Android [Context] for this service.
+     *
+     * @param ctx The context to use.
+     */
     fun setContext(ctx: Context) {
         this.context = ctx
     }
 
+    /**
+     * Generates a PDF invoice using the Android PrintManager and a hidden [WebView].
+     *
+     * @param htmlContent The HTML content to export.
+     * @return [Result.Success] on successful print job initiation, or [Result.Error] on failure.
+     */
     actual suspend fun exportToPdf(htmlContent: String): Result<Unit> {
         return withContext(Dispatchers.Main) {
             try {
