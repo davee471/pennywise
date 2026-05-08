@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>BudgetController</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            composeApp
+                    </a>
+            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":composeApp:dokkaHtml/commonMain">common</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="composeApp::stud.brokers.pennywise.controllers/BudgetController///PointingToDeclaration//-813795679">
+  <div class="breadcrumbs"><a href="../../../index.html">composeApp</a><span class="delimiter">/</span><a href="../index.html">stud.brokers.pennywise.controllers</a><span class="delimiter">/</span><span class="current">BudgetController</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Budget</span><wbr></wbr><span><span>Controller</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">BudgetController</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">dbManager<span class="token operator">: </span><a href="../../stud.brokers.pennywise.db/-database-manager/index.html">DatabaseManager</a><span class="token punctuation">, </span></span><span class="parameter ">txController<span class="token operator">: </span><a href="../-transaction-controller/index.html">TransactionController</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">Controller responsible for managing the active budget cycle and calculating spending limits.</p><p class="paragraph">Acts as the central coordinator between the UI layer, <a href="../../stud.brokers.pennywise.db/-database-manager/index.html">DatabaseManager</a>, and <a href="../-transaction-controller/index.html">TransactionController</a> for all budget-lifecycle operations. Responsibilities include:</p><ul><li><p class="paragraph">Loading and persisting the active <a href="../../stud.brokers.pennywise.models/-budget-cycle/index.html">BudgetCycle</a>.</p></li><li><p class="paragraph">Detecting and cleaning up expired cycles.</p></li><li><p class="paragraph">Calculating the dynamic daily spending limit based on remaining allowance and days left.</p></li><li><p class="paragraph">Exposing reactive state (via Compose <a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/package-summary.html">mutableStateOf</a>) for low-budget and exhaustion warnings.</p></li></ul><p class="paragraph">All heavy work runs on <span data-unresolved-link="kotlinx.coroutines/Dispatchers/Default/#/PointingToDeclaration/">Dispatchers.Default</span>; UI-observable state is updated via Compose state holders so recomposition is triggered automatically.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1537900330%2FConstructors%2F-813795679" anchor-label="BudgetController" id="1537900330%2FConstructors%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-budget-controller.html"><span>Budget</span><wbr></wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1537900330%2FConstructors%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">dbManager<span class="token operator">: </span><a href="../../stud.brokers.pennywise.db/-database-manager/index.html">DatabaseManager</a><span class="token punctuation">, </span></span><span class="parameter ">txController<span class="token operator">: </span><a href="../-transaction-controller/index.html">TransactionController</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="293436022%2FClasslikes%2F-813795679" anchor-label="CycleStatus" id="293436022%2FClasslikes%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cycle-status/index.html"><span>Cycle</span><wbr></wbr><span><span>Status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="293436022%2FClasslikes%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-cycle-status/index.html">CycleStatus</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-cycle-status/index.html">BudgetController.CycleStatus</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Represents the current operational state of the budget cycle.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-640363685%2FProperties%2F-813795679" anchor-label="activeCycle" id="-640363685%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="active-cycle.html"><span>active</span><wbr></wbr><span><span>Cycle</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-640363685%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="active-cycle.html">activeCycle</a><span class="token operator">: </span><a href="../../stud.brokers.pennywise.models/-budget-cycle/index.html">BudgetCycle</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The currently active <a href="../../stud.brokers.pennywise.models/-budget-cycle/index.html">BudgetCycle</a>, or <code class="lang-kotlin">null</code> if no cycle has been initialized.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-587618461%2FProperties%2F-813795679" anchor-label="cycleStatus" id="-587618461%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cycle-status.html"><span>cycle</span><wbr></wbr><span><span>Status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-587618461%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="cycle-status.html">cycleStatus</a><span class="token operator">: </span><a href="-cycle-status/index.html">BudgetController.CycleStatus</a></div><div class="brief "><p class="paragraph">The current semantic lifecycle status of the budget cycle.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-672321539%2FProperties%2F-813795679" anchor-label="dailyLimit" id="-672321539%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="daily-limit.html"><span>daily</span><wbr></wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-672321539%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="daily-limit.html">dailyLimit</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">The calculated spending limit for the remainder of today, in the cycle's currency.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1995988906%2FProperties%2F-813795679" anchor-label="isCycleExpired" id="-1995988906%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-cycle-expired.html"><span>is</span><wbr></wbr><span>Cycle</span><wbr></wbr><span><span>Expired</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1995988906%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-cycle-expired.html">isCycleExpired</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph"><code class="lang-kotlin">true</code> if the current calendar date is strictly after the active cycle's <a href="../../stud.brokers.pennywise.models/-budget-cycle/end-date.html">BudgetCycle.endDate</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-561130372%2FProperties%2F-813795679" anchor-label="isExhausted" id="-561130372%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-exhausted.html"><span>is</span><wbr></wbr><span><span>Exhausted</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-561130372%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-exhausted.html">isExhausted</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph"><code class="lang-kotlin">true</code> if the cycle's total allowance has been completely spent (remaining ≤ 0).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1314160752%2FProperties%2F-813795679" anchor-label="isLoaded" id="1314160752%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-loaded.html"><span>is</span><wbr></wbr><span><span>Loaded</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1314160752%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-loaded.html">isLoaded</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the initial cycle data has finished loading from the database.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="130253324%2FProperties%2F-813795679" anchor-label="isLowBudget" id="130253324%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-low-budget.html"><span>is</span><wbr></wbr><span>Low</span><wbr></wbr><span><span>Budget</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="130253324%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-low-budget.html">isLowBudget</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph"><code class="lang-kotlin">true</code> if the remaining total allowance has fallen to 20 % or below its starting value, but is not yet fully exhausted.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-405873872%2FProperties%2F-813795679" anchor-label="isOnFinalDay" id="-405873872%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-on-final-day.html"><span>is</span><wbr></wbr><span>On</span><wbr></wbr><span>Final</span><wbr></wbr><span><span>Day</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-405873872%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-on-final-day.html">isOnFinalDay</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph"><code class="lang-kotlin">true</code> if today is the last day of the active budget cycle.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1027258495%2FProperties%2F-813795679" anchor-label="isOverDailyLimit" id="1027258495%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-over-daily-limit.html"><span>is</span><wbr></wbr><span>Over</span><wbr></wbr><span>Daily</span><wbr></wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1027258495%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-over-daily-limit.html">isOverDailyLimit</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph"><code class="lang-kotlin">true</code> if today's spending has exceeded the base daily limit calculated for this day.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-392945716%2FProperties%2F-813795679" anchor-label="spentToday" id="-392945716%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="spent-today.html"><span>spent</span><wbr></wbr><span><span>Today</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-392945716%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="spent-today.html">spentToday</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">The total amount spent in expense transactions recorded for today's date.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-409259277%2FFunctions%2F-813795679" anchor-label="addIncome" id="-409259277%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-income.html"><span>add</span><wbr></wbr><span><span>Income</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-409259277%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="add-income.html"><span class="token function">addIncome</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">amount<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Records an income transaction and increases the active cycle's total allowance accordingly.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="256158424%2FFunctions%2F-813795679" anchor-label="editIncome" id="256158424%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="edit-income.html"><span>edit</span><wbr></wbr><span><span>Income</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="256158424%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="edit-income.html"><span class="token function">editIncome</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">amount<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Adjusts the active cycle's total allowance by <a href="edit-income.html">amount</a> without logging a new transaction.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2021637955%2FFunctions%2F-813795679" anchor-label="getDailyLimit" id="2021637955%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-daily-limit.html"><span>get</span><wbr></wbr><span>Daily</span><wbr></wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2021637955%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="get-daily-limit.html"><span class="token function">getDailyLimit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Forces a metrics refresh and returns the up-to-date <a href="daily-limit.html">dailyLimit</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1304432511%2FFunctions%2F-813795679" anchor-label="initCycle" id="1304432511%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="init-cycle.html"><span>init</span><wbr></wbr><span><span>Cycle</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1304432511%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="init-cycle.html"><span class="token function">initCycle</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">totalAmount<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">start<span class="token operator">: </span><span data-unresolved-link="kotlinx.datetime/LocalDate///PointingToDeclaration/">LocalDate</span><span class="token punctuation">, </span></span><span class="parameter ">end<span class="token operator">: </span><span data-unresolved-link="kotlinx.datetime/LocalDate///PointingToDeclaration/">LocalDate</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Creates and persists a new budget cycle, then reloads state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1159277983%2FFunctions%2F-813795679" anchor-label="loadActiveCycle" id="-1159277983%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-active-cycle.html"><span>load</span><wbr></wbr><span>Active</span><wbr></wbr><span><span>Cycle</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1159277983%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="load-active-cycle.html"><span class="token function">loadActiveCycle</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Loads the active cycle from the database and handles any expiration cleanup.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="847983068%2FFunctions%2F-813795679" anchor-label="logExpense" id="847983068%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="log-expense.html"><span>log</span><wbr></wbr><span><span>Expense</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="847983068%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="log-expense.html"><span class="token function">logExpense</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">amount<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">category<span class="token operator">: </span><a href="../../stud.brokers.pennywise.models/-category/index.html">Category</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Logs a new expense transaction against the active cycle and refreshes spending metrics.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-715450771%2FFunctions%2F-813795679" anchor-label="refreshSpentToday" id="-715450771%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="refresh-spent-today.html"><span>refresh</span><wbr></wbr><span>Spent</span><wbr></wbr><span><span>Today</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-715450771%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="refresh-spent-today.html"><span class="token function">refreshSpentToday</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Recalculates all spending metrics based on current transactions and the current date.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-338709016%2FFunctions%2F-813795679" anchor-label="resetCycle" id="-338709016%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset-cycle.html"><span>reset</span><wbr></wbr><span><span>Cycle</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-338709016%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="reset-cycle.html"><span class="token function">resetCycle</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Permanently deletes the active cycle and all its associated data from the database.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

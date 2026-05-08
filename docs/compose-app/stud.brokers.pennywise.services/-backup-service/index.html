@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>BackupService</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            composeApp
+                    </a>
+            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":composeApp:dokkaHtml/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":composeApp:dokkaHtml/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":composeApp:dokkaHtml/jvmMain">jvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="composeApp::stud.brokers.pennywise.services/BackupService///PointingToDeclaration//-236904877">
+  <div class="breadcrumbs"><a href="../../../index.html">composeApp</a><span class="delimiter">/</span><a href="../index.html">stud.brokers.pennywise.services</a><span class="delimiter">/</span><span class="current">BackupService</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Backup</span><wbr></wbr><span><span>Service</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/androidMain" data-filterable-set=":composeApp:dokkaHtml/androidMain" data-active="" data-toggle=":composeApp:dokkaHtml/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain" data-toggle=":composeApp:dokkaHtml/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/jvmMain" data-filterable-set=":composeApp:dokkaHtml/jvmMain" data-toggle=":composeApp:dokkaHtml/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":composeApp:dokkaHtml/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">class </span><a href="index.html">BackupService</a></div><p class="paragraph">Android implementation of <a href="index.html">BackupService</a>.</p><p class="paragraph">Snapshots are written to the public Downloads directory at <code class="lang-kotlin">Downloads/pennywise_backup.json</code>. This makes it easy for the user to import and export data manually.</p><p class="paragraph">Only one snapshot is kept at a time. Each <a href="create-snapshot.html">createSnapshot</a> call overwrites the previous file. All file I/O runs on <span data-unresolved-link="kotlinx.coroutines/Dispatchers/IO/#/PointingToDeclaration/">Dispatchers.IO</span>.</p></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">class </span><a href="index.html">BackupService</a></div><p class="paragraph">Platform-specific service for persisting and loading backup snapshots.</p><p class="paragraph">This is an <code class="lang-kotlin">expect</code> declaration — each platform provides its own <code class="lang-kotlin">actual</code> implementation:</p><ul><li><p class="paragraph"><strong>Android</strong>: writes to the device's public Downloads directory.</p></li><li><p class="paragraph"><strong>JVM/Desktop</strong>: writes to <code class="lang-kotlin">~/Documents/</code> in the user's home directory.</p></li></ul><p class="paragraph">Snapshots are serialized as pretty-printed JSON using <code class="lang-kotlin">kotlinx.serialization</code>. Only one snapshot is kept at a time — each <a href="create-snapshot.html">createSnapshot</a> call overwrites the previous file.</p><p class="paragraph">File I/O runs on kotlinx.coroutines.Dispatchers.IO to avoid blocking the main thread.</p></div><div class="content sourceset-dependent-content" data-togglable=":composeApp:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">class </span><a href="index.html">BackupService</a></div><p class="paragraph">JVM/Desktop implementation of <a href="index.html">BackupService</a>.</p><p class="paragraph">Snapshots are written to <code class="lang-kotlin">~/Documents/pennywise_backup.json</code> in the user's home directory.</p><p class="paragraph">Only one snapshot is kept at a time. Each <a href="create-snapshot.html">createSnapshot</a> call overwrites the previous file. All file I/O runs on <span data-unresolved-link="kotlinx.coroutines/Dispatchers/IO/#/PointingToDeclaration/">Dispatchers.IO</span>.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-614840235%2FConstructors%2F1113834248" anchor-label="BackupService" id="-614840235%2FConstructors%2F1113834248" data-filterable-set=":composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain" data-filterable-set=":composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-backup-service.html"><span>Backup</span><wbr></wbr><span><span>Service</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-614840235%2FConstructors%2F1113834248"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/androidMain" data-filterable-set=":composeApp:dokkaHtml/androidMain" data-active="" data-toggle=":composeApp:dokkaHtml/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/jvmMain" data-filterable-set=":composeApp:dokkaHtml/jvmMain" data-toggle=":composeApp:dokkaHtml/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/androidMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span></div></div><div class="content sourceset-dependent-content" data-togglable=":composeApp:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-891123334%2FFunctions%2F-236904877" anchor-label="createSnapshot" id="-891123334%2FFunctions%2F-236904877" data-filterable-set=":composeApp:dokkaHtml/commonMain,:composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain,:composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain" data-filterable-set=":composeApp:dokkaHtml/commonMain,:composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-snapshot.html"><span>create</span><wbr></wbr><span><span>Snapshot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-891123334%2FFunctions%2F-236904877"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/androidMain" data-filterable-set=":composeApp:dokkaHtml/androidMain" data-active="" data-toggle=":composeApp:dokkaHtml/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain" data-toggle=":composeApp:dokkaHtml/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/jvmMain" data-filterable-set=":composeApp:dokkaHtml/jvmMain" data-toggle=":composeApp:dokkaHtml/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":composeApp:dokkaHtml/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="create-snapshot.html"><span class="token function">createSnapshot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><a href="../../stud.brokers.pennywise.models/-backup-payload/index.html">BackupPayload</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Serializes <a href="create-snapshot.html">payload</a> to JSON and writes it to <code class="lang-kotlin">filesDir/snapshots/internal_backup.json</code>. Creates the snapshots directory if it does not exist yet.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="create-snapshot.html"><span class="token function">createSnapshot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><a href="../../stud.brokers.pennywise.models/-backup-payload/index.html">BackupPayload</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Serializes <a href="create-snapshot.html">payload</a> to JSON and writes it to the platform snapshot file.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":composeApp:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="create-snapshot.html"><span class="token function">createSnapshot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><a href="../../stud.brokers.pennywise.models/-backup-payload/index.html">BackupPayload</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Serializes <a href="create-snapshot.html">payload</a> to JSON and writes it to <code class="lang-kotlin">~/.pennywise/snapshot/internal_backup.json</code>. Creates the backup directory if it does not exist. Throws if directory creation fails and the directory still does not exist after the attempt.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1119872888%2FFunctions%2F-236904877" anchor-label="loadLastSnapshot" id="-1119872888%2FFunctions%2F-236904877" data-filterable-set=":composeApp:dokkaHtml/commonMain,:composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain,:composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain" data-filterable-set=":composeApp:dokkaHtml/commonMain,:composeApp:dokkaHtml/androidMain,:composeApp:dokkaHtml/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-last-snapshot.html"><span>load</span><wbr></wbr><span>Last</span><wbr></wbr><span><span>Snapshot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1119872888%2FFunctions%2F-236904877"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/androidMain" data-filterable-set=":composeApp:dokkaHtml/androidMain" data-active="" data-toggle=":composeApp:dokkaHtml/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain" data-toggle=":composeApp:dokkaHtml/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":composeApp:dokkaHtml/jvmMain" data-filterable-set=":composeApp:dokkaHtml/jvmMain" data-toggle=":composeApp:dokkaHtml/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":composeApp:dokkaHtml/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="load-last-snapshot.html"><span class="token function">loadLastSnapshot</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="../../stud.brokers.pennywise.models/-backup-payload/index.html">BackupPayload</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Reads and deserializes the last snapshot from <code class="lang-kotlin">filesDir/snapshots/internal_backup.json</code>.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="load-last-snapshot.html"><span class="token function">loadLastSnapshot</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="../../stud.brokers.pennywise.models/-backup-payload/index.html">BackupPayload</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Reads and deserializes the last snapshot from the platform snapshot file.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":composeApp:dokkaHtml/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="load-last-snapshot.html"><span class="token function">loadLastSnapshot</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="../../stud.brokers.pennywise.models/-backup-payload/index.html">BackupPayload</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Reads and deserializes the last snapshot from <code class="lang-kotlin">~/.pennywise/snapshot/internal_backup.json</code>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinxSerialization)
     id("app.cash.sqldelight") version "2.0.2"
+    id("org.jetbrains.dokka")
 }
 
 kotlin {
@@ -117,4 +118,7 @@ repositories {
     mavenCentral()
     google()
     maven { url = uri("https://jitpack.io") }
+}
+tasks.dokkaHtml.configure {
+    outputDirectory.set(file("../docs"))
 }

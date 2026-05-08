@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>SettingsController</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            composeApp
+                    </a>
+            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":composeApp:dokkaHtml/commonMain">common</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="composeApp::stud.brokers.pennywise.controllers/SettingsController///PointingToDeclaration//-813795679">
+  <div class="breadcrumbs"><a href="../../../index.html">composeApp</a><span class="delimiter">/</span><a href="../index.html">stud.brokers.pennywise.controllers</a><span class="delimiter">/</span><span class="current">SettingsController</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Settings</span><wbr></wbr><span><span>Controller</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">SettingsController</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">dbManager<span class="token operator">: </span><a href="../../stud.brokers.pennywise.db/-database-manager/index.html">DatabaseManager</a><span class="token punctuation">, </span></span><span class="parameter ">budgetController<span class="token operator">: </span><a href="../-budget-controller/index.html">BudgetController</a><span class="token punctuation">, </span></span><span class="parameter ">exportService<span class="token operator">: </span><a href="../../stud.brokers.pennywise.services/-export-service/index.html">ExportService</a><span class="token punctuation">, </span></span><span class="parameter ">backupController<span class="token operator">: </span><a href="../-backup-controller/index.html">BackupController</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">Controller responsible for persisting and exposing user-configurable app settings.</p><p class="paragraph">Bridges the UI and <a href="../../stud.brokers.pennywise.db/-database-manager/index.html">DatabaseManager</a> for all settings-related operations, including:</p><ul><li><p class="paragraph">PIN lock management (enable/disable and hash-based verification).</p></li><li><p class="paragraph">Push notification preferences.</p></li><li><p class="paragraph">Display currency symbol selection.</p></li><li><p class="paragraph">PDF export via <a href="../../stud.brokers.pennywise.services/-export-service/index.html">ExportService</a>.</p></li><li><p class="paragraph">Backup and restore via <a href="../-backup-controller/index.html">BackupController</a>.</p></li><li><p class="paragraph">Full app data reset.</p></li></ul><p class="paragraph">Settings are stored as key-value pairs in the database using keys defined in <a href="../../stud.brokers.pennywise.util/-settings-keys/index.html">SettingsKeys</a>. All reactive properties are backed by Compose <a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/package-summary.html">mutableStateOf</a> so the UI recomposes automatically when values change.</p><p class="paragraph">Initialization is asynchronous: the init block launches a coroutine on <span data-unresolved-link="kotlinx.coroutines/Dispatchers/Default/#/PointingToDeclaration/">Dispatchers.Default</span> that loads all settings and then sets <a href="is-loaded.html">isLoaded</a> to <code class="lang-kotlin">true</code>. Gate any settings-dependent UI behind <a href="is-loaded.html">isLoaded</a>.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1580583635%2FConstructors%2F-813795679" anchor-label="SettingsController" id="-1580583635%2FConstructors%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-settings-controller.html"><span>Settings</span><wbr></wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1580583635%2FConstructors%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">dbManager<span class="token operator">: </span><a href="../../stud.brokers.pennywise.db/-database-manager/index.html">DatabaseManager</a><span class="token punctuation">, </span></span><span class="parameter ">budgetController<span class="token operator">: </span><a href="../-budget-controller/index.html">BudgetController</a><span class="token punctuation">, </span></span><span class="parameter ">exportService<span class="token operator">: </span><a href="../../stud.brokers.pennywise.services/-export-service/index.html">ExportService</a><span class="token punctuation">, </span></span><span class="parameter ">backupController<span class="token operator">: </span><a href="../-backup-controller/index.html">BackupController</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1893100972%2FProperties%2F-813795679" anchor-label="currencySymbol" id="-1893100972%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="currency-symbol.html"><span>currency</span><wbr></wbr><span><span>Symbol</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1893100972%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="currency-symbol.html">currencySymbol</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The currency symbol displayed throughout the UI (e.g., <code class="lang-kotlin">&quot;EGP&quot;</code>, <code class="lang-kotlin">&quot;USD&quot;</code>, <code class="lang-kotlin">&quot;€&quot;</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-71656370%2FProperties%2F-813795679" anchor-label="isLoaded" id="-71656370%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-loaded.html"><span>is</span><wbr></wbr><span><span>Loaded</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-71656370%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-loaded.html">isLoaded</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the initial settings have finished loading from the database.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1627860762%2FProperties%2F-813795679" anchor-label="isNotificationsEnabled" id="1627860762%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-notifications-enabled.html"><span>is</span><wbr></wbr><span>Notifications</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1627860762%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-notifications-enabled.html">isNotificationsEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether push notifications are currently enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1963512647%2FProperties%2F-813795679" anchor-label="isPinEnabled" id="1963512647%2FProperties%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-pin-enabled.html"><span>is</span><wbr></wbr><span>Pin</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1963512647%2FProperties%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-pin-enabled.html">isPinEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether PIN lock is currently enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-109822617%2FFunctions%2F-813795679" anchor-label="exportBackup" id="-109822617%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="export-backup.html"><span>export</span><wbr></wbr><span><span>Backup</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-109822617%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="export-backup.html"><span class="token function">exportBackup</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Triggers a full database backup via <a href="../-backup-controller/backup.html">BackupController.backup</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="998210250%2FFunctions%2F-813795679" anchor-label="exportToPdf" id="998210250%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="export-to-pdf.html"><span>export</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Pdf</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="998210250%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="export-to-pdf.html"><span class="token function">exportToPdf</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">htmlContent<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Exports the app's report as a PDF using the provided HTML content.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1230774102%2FFunctions%2F-813795679" anchor-label="importBackup" id="1230774102%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="import-backup.html"><span>import</span><wbr></wbr><span><span>Backup</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1230774102%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="import-backup.html"><span class="token function">importBackup</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stud.brokers.pennywise.util/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Triggers a database restore via <a href="../-backup-controller/restore.html">BackupController.restore</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1569011764%2FFunctions%2F-813795679" anchor-label="loadSettings" id="1569011764%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-settings.html"><span>load</span><wbr></wbr><span><span>Settings</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1569011764%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="load-settings.html"><span class="token function">loadSettings</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Loads all user settings from the database and updates the in-memory state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="705193598%2FFunctions%2F-813795679" anchor-label="performFullReset" id="705193598%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="perform-full-reset.html"><span>perform</span><wbr></wbr><span>Full</span><wbr></wbr><span><span>Reset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="705193598%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="perform-full-reset.html"><span class="token function">performFullReset</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Performs a full application data reset, clearing all database records and cycle state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1032696754%2FFunctions%2F-813795679" anchor-label="toggleNotifications" id="-1032696754%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="toggle-notifications.html"><span>toggle</span><wbr></wbr><span><span>Notifications</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1032696754%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="toggle-notifications.html"><span class="token function">toggleNotifications</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Persists the notification preference and updates <a href="is-notifications-enabled.html">isNotificationsEnabled</a> if the save succeeds.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2119267080%2FFunctions%2F-813795679" anchor-label="togglePinLock" id="2119267080%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="toggle-pin-lock.html"><span>toggle</span><wbr></wbr><span>Pin</span><wbr></wbr><span><span>Lock</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2119267080%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="toggle-pin-lock.html"><span class="token function">togglePinLock</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">rawPin<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Enables or disables PIN lock and optionally saves a new hashed PIN.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2120392033%2FFunctions%2F-813795679" anchor-label="updateCurrency" id="2120392033%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-currency.html"><span>update</span><wbr></wbr><span><span>Currency</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2120392033%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="update-currency.html"><span class="token function">updateCurrency</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">symbol<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Persists a new currency symbol and updates <a href="currency-symbol.html">currencySymbol</a> if the save succeeds.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="281598275%2FFunctions%2F-813795679" anchor-label="verifyPin" id="281598275%2FFunctions%2F-813795679" data-filterable-set=":composeApp:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":composeApp:dokkaHtml/commonMain" data-filterable-set=":composeApp:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="verify-pin.html"><span>verify</span><wbr></wbr><span><span>Pin</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="281598275%2FFunctions%2F-813795679"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":composeApp:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="verify-pin.html"><span class="token function">verifyPin</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">input<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Verifies a user-entered PIN against the stored hash.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
