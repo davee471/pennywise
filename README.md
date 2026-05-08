@@ -1,3 +1,5 @@
+
+
 # PennyWise
 
 **PennyWise** is an in-development lightweight, high-performance personal finance manager built with **Kotlin Multiplatform** and **Compose**. It focuses on "under the hood" systems logic to provide users with a reactive, secure, and data-driven budgeting experience.
